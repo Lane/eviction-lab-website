@@ -1,0 +1,51 @@
+{{ partial "header" . }}
+
+<!-- section header -->
+{{ range (where .Site.RegularPages "Params.childof" ("faq")) }}
+        {{ if eq .Params.type "meta" }} 
+<div class="graphic-header help-faq center-page-wrapper">
+  <div class="center-page">
+    <h1 class="graphic-page-header">{{ .Params.h1 }}</h1>
+    <div class="underbar"></div>
+  </div>
+</div>
+
+<!-- subnav -->
+<div class="shadow-bottom center-page-wrapper subnav">
+    <div class="center-content-post">  
+<div class="dropdown">
+    <button class="dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        {{ .Params.li1 }}
+    </button>
+    <!--<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">-->
+      <ul class="anchor-links dropdown-menu">
+        <li><a class="dropdown-item smoothScroll" href="#map">{{ .Params.li2 }}</a></li>
+        <li><a class="dropdown-item smoothScroll" href="#rankings">{{ .Params.li4 }}</a></li>
+        <li><a class="dropdown-item smoothScroll" href="#definitions">{{ .Params.li5 }}</a></li>
+        <li><a class="dropdown-item smoothScroll" href="#about-data">{{ .Params.li6 }}</a></li>
+        <li><a class="dropdown-item smoothScroll" href="#stories">{{ .Params.li7 }}</a></li>
+    </ul>
+    <!--</div>-->
+  </div>
+  </div>
+</div>
+
+<!-- *********************************************** -->
+<!-- begin FAQs -->
+{{ end }}
+{{ end }}
+
+<div class="help-faq-content social-side">
+  {{ partial "social-share-vert" . }}
+  <div class="center-page-wrapper">
+    <div class="center-content-post page-list">
+      <div class="accordion">
+        {{ range .Params.faq }}
+          {{ partial "faq" . }}
+        {{ end }}
+      </div>
+    </div>
+  </div>
+</div>
+
+{{ partial "footer" . }}
