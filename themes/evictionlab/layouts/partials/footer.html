@@ -107,5 +107,10 @@
   <script src="/js/lib.min.js"></script>
   <script src="/js/main.js?{{ now.Unix }}"></script>
   {{ partial "covid-map" . }}
+
+
+  {{ if eq .Params.scripts "weekly" }}
+    {{ partial "weekly-reports/scripts" .}}
+  {{ end }}
 </body>
 </html>

@@ -1,0 +1,224 @@
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.min.js"></script>
+
+<script>
+
+	function slugify(string) {
+	  const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;'
+	  const b = 'aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrsssssttuuuuuuuuuwxyyzzz------'
+	  const p = new RegExp(a.split('').join('|'), 'g')
+
+	  return string.toString().toLowerCase()
+	    .replace(/\s+/g, '-') // Replace spaces with -
+	    .replace(p, c => b.charAt(a.indexOf(c))) // Replace special characters
+	    .replace(/&/g, '-and-') // Replace & with 'and'
+	    .replace(/[^\w\-]+/g, '') // Remove all non-word characters
+	    .replace(/\-\-+/g, '-') // Replace multiple - with single -
+	    .replace(/^-+/, '') // Trim - from start of text
+	    .replace(/-+$/, '') // Trim - from end of text
+	}
+
+  function getCurrentURL() {
+  	return window.location.protocol+'//'+window.location.host+window.location.pathname
+  }
+
+  $(document).ready(function() {
+
+    $('.table').tablesorter()
+
+    $('.table__row').click(function() {
+    	const placeName = $(this).data("name")
+    	if(placeName) {
+    		const slug = slugify(placeName)
+    		window.location.href = getCurrentURL() + slug
+    	}
+    })
+
+  })
+</script>
+
+
+<style>
+
+  /** hero */
+
+    .graphic-header {
+      background: #555;
+    }
+
+  /** end hero */
+
+  /** page layout */ 
+
+    .layout {
+      display: flex;
+      justify-content: center;
+      flex-direction: row-reverse;
+      max-width: 1200px;
+      margin: auto;
+      padding: 24px;
+    }
+    .layout > .column--content {
+      flex: 1;
+      max-width: 720px;
+    }
+
+  /** end page layout */
+
+
+  /** table base */
+
+    .table { position: relative; }
+
+    .table__head th,
+    .table__body td {
+      border: none;
+      padding: 8px;
+      vertical-align: middle;
+    }
+    /** zebra stripe rows */
+    .table__row:nth-child(2n) {
+      background-color: #f5f9ff    
+    }
+    /** row hover color */
+    .table__body .table__row:hover {
+      cursor: pointer;
+      background: rgba(226,64,0,0.1);
+    }
+
+    @media (min-width: 768px) {
+      .table__head th,
+      .table__body td {
+        padding: 16px;
+      }
+    }
+
+  /** end table base  */
+
+
+  /** table header row */
+
+    .table {
+      border-collapse: separate;
+    }
+
+    .table__head {
+      text-transform: uppercase;
+      color: #737373;
+      font-family: GT-Eesti-Display-Bold,sans-serif;
+      font-size: 1.2rem;
+      text-align: left;
+    }
+    .table__head th {
+      position: sticky;
+      top: 56px;
+      background: #fff;
+    }
+    .table__head .table__cell:hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    .table__head .table__cell:focus {
+      outline: none;
+      border-bottom-color: #e24000;
+    }
+    /** ignore button column header */
+    .table__head .table__cell--button {
+      pointer-events: none
+    }
+    @media(min-width: 768px) {
+      .table__head {
+        font-size: 1.5rem;
+      }
+    }
+
+  /** end table header row */
+
+
+  /** table body */
+
+    /** table name column */ 
+
+      .table__body .table__cell--name {
+        font-family: GT-Eesti-Display-Bold,sans-serif;
+        text-transform: uppercase;
+        color: #434778;
+        font-size: 1.4rem;
+      }
+
+      @media(min-width: 768px) {
+        .table__body .table__cell--name { font-size: 2.1rem; }
+      }
+
+    /** end table name column */
+
+    /** table number column */ 
+
+      .table__body .table__cell--number {
+        font-family: GT-Eesti-Display-Bold,sans-serif;
+        text-transform: uppercase;
+        font-size: 1.4rem;
+      }
+
+      @media(min-width: 768px) {
+        .table__body .table__cell--number { font-size: 1.8rem; }
+      }
+
+    /** end table number column */ 
+
+
+    /** table button column */
+
+      .table__cell--button {
+        display: none;
+        padding:0;
+        width: 176px;
+      }
+
+      .table__cell--button .btn {
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height:1;
+        font-family: GT-Eesti-Display-Bold,sans-serif;
+        text-transform: uppercase;
+        font-size: 1.4rem;
+        color: #999;
+      }
+      .table__row:hover .table__cell--button .btn {
+        color: #e24000;
+      }
+      .table__cell--button .btn .fa {
+        margin-left: 8px;
+      }
+
+      @media(min-width: 1024px) {
+        .table__cell--button {
+          display: table-cell;
+        }
+      }
+
+    /** end table button column */
+
+  /** end table body */
+
+
+  /** table footer */
+
+    .caption {
+      font-size: 1.2rem;
+      color: #7d7d7d;
+    }
+    @media(min-width: 768px) {
+      .caption {
+        font-size: 1.4rem;
+      }
+    }
+
+  /** end table footer */
+
+  .column .subhead {
+    margin-bottom: 24px;
+  }
+
+</style>

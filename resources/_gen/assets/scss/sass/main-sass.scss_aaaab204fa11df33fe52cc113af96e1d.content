@@ -97,7 +97,7 @@ h3 {
 
 @media (max-width: 767px) {
   p, .center-content-post.page-list li, select, input, textarea, .post-body ol li, .post-body ul li, table.page-stats,
-  table.page-stats td.table-text {
+table.page-stats td.table-text {
     font-family: Akkurat-Regular, sans-serif;
     font-size: 1.4rem;
     font-weight: normal;
@@ -109,7 +109,7 @@ h3 {
 
 @media (min-width: 768px) and (max-width: 1023px) {
   p, .center-content-post.page-list li, select, input, textarea, .post-body ol li, .post-body ul li, table.page-stats,
-  table.page-stats td.table-text {
+table.page-stats td.table-text {
     font-family: Akkurat-Regular, sans-serif;
     font-size: 1.6rem;
     font-weight: normal;
@@ -121,7 +121,7 @@ h3 {
 
 @media (min-width: 1024px) and (max-width: 1439px) {
   p, .center-content-post.page-list li, select, input, textarea, .post-body ol li, .post-body ul li, table.page-stats,
-  table.page-stats td.table-text {
+table.page-stats td.table-text {
     font-family: Akkurat-Regular, sans-serif;
     font-size: 1.6rem;
     font-weight: normal;
@@ -133,7 +133,7 @@ h3 {
 
 @media (min-width: 1440px) {
   p, .center-content-post.page-list li, select, input, textarea, .post-body ol li, .post-body ul li, table.page-stats,
-  table.page-stats td.table-text {
+table.page-stats td.table-text {
     font-family: Akkurat-Regular, sans-serif;
     font-size: 1.8rem;
     font-weight: normal;
@@ -897,7 +897,7 @@ header + * {
 
 @media (max-width: 767px) {
   .subnav-link, .subnav-link:hover,
-  .subnav-active, .subnav-active:hover {
+.subnav-active, .subnav-active:hover {
     margin-right: 14px;
   }
 }
@@ -2474,7 +2474,7 @@ ul.anchor-links a:hover {
 
 @media (min-width: 768px) {
   .anchor-links li.active a:after,
-  .anchor-links li a.highlight:after {
+.anchor-links li a.highlight:after {
     opacity: 1;
   }
 }
@@ -2835,27 +2835,27 @@ ul.anchor-links a:hover {
 
 @media (min-width: 768px) {
   .blog-list .list-wrapper:last-child,
-  .media-list .list-wrapper:last-child,
-  .research-list .list-wrapper:last-child,
-  .dual-research .list-wrapper:last-child {
+.media-list .list-wrapper:last-child,
+.research-list .list-wrapper:last-child,
+.dual-research .list-wrapper:last-child {
     padding-bottom: 3.2rem;
   }
 }
 
 @media (min-width: 1024px) {
   .blog-list .list-wrapper:last-child,
-  .media-list .list-wrapper:last-child,
-  .research-list .list-wrapper:last-child,
-  .dual-research .list-wrapper:last-child {
+.media-list .list-wrapper:last-child,
+.research-list .list-wrapper:last-child,
+.dual-research .list-wrapper:last-child {
     padding-bottom: 4rem;
   }
 }
 
 @media (min-width: 1440px) {
   .blog-list .list-wrapper:last-child,
-  .media-list .list-wrapper:last-child,
-  .research-list .list-wrapper:last-child,
-  .dual-research .list-wrapper:last-child {
+.media-list .list-wrapper:last-child,
+.research-list .list-wrapper:last-child,
+.dual-research .list-wrapper:last-child {
     padding-bottom: 4.8rem;
   }
 }
@@ -3571,7 +3571,7 @@ ul.anchor-links a:hover {
   font-weight: normal;
   text-transform: uppercase;
   letter-spacing: 0.7px;
-  color: #b3b2b2;
+  color: #b3b3b3;
   padding: 5px 0 0 0;
 }
 
@@ -3680,7 +3680,7 @@ a.read-more .fa-chevron-right:before {
   font-weight: normal;
   text-transform: uppercase;
   letter-spacing: 0.7px;
-  color: #b3b2b2;
+  color: #b3b3b3;
   padding: 5px 0 20px 0;
 }
 
@@ -4009,7 +4009,7 @@ a.read-more .fa-chevron-right:before {
   font-family: Akkurat-Regular, sans-serif;
   font-size: 0.93em;
   font-weight: normal;
-  color: #b3b2b2;
+  color: #b3b3b3;
 }
 
 .details .teaser {
@@ -4033,7 +4033,7 @@ a.read-more .fa-chevron-right:before {
 }
 
 .details .when .clock {
-  color: #b3b2b2;
+  color: #b3b3b3;
 }
 
 .details .when .time {

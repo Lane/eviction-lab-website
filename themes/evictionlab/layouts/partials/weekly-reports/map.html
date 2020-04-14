@@ -1,0 +1,93 @@
+<div id="map" class="map"></div>
+<script src='https://api.mapbox.com/mapbox-gl-js/v1.9.1/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v1.9.1/mapbox-gl.css' rel='stylesheet' />
+<script>
+	window.onload = function() {
+		var geojson = {{ .Site.Data.maps.harris }}
+		var bbox = geojson.bbox
+		var padding = 0.15
+		var bounds = [[bbox[0]-padding, bbox[1]-padding], [bbox[2]+padding, bbox[3]+padding]]
+		console.log(geojson)
+		mapboxgl.accessToken = 'pk.eyJ1IjoiZXZpY3Rpb24tbGFiIiwiYSI6ImNqYzJoMzhkbjBncGkyeW4yNGlkbjRkcTQifQ.IQNWME_jYqxTH7wmFrFX-g';
+		var map = new mapboxgl.Map({
+			container: 'map',
+			style: 'mapbox://styles/eviction-lab/ck8za8qns07451jpm48xn6tq2',
+			bounds: bounds,
+			maxBounds: bounds,
+		});
+
+		// disable map zoom when using scroll
+		map.scrollZoom.disable();
+		// disable map rotation using right click + drag
+		map.dragRotate.disable();
+ 
+		// disable map rotation using touch rotation gesture
+		map.touchZoomRotate.disableRotation();
+		map.scrollZoom.setWheelZoomRate(0.02); // Default 1/450
+
+		map.on("wheel", event => {
+
+		  if (event.originalEvent.ctrlKey || event.originalEvent.metaKey) { // Check if CTRL key is pressed
+		    event.originalEvent.preventDefault(); // Prevent chrome/firefox default behavior
+		    if (!map.scrollZoom._enabled) map.scrollZoom.enable(); // Enable zoom only if it's disabled
+		  } else {
+		    if (map.scrollZoom._enabled) map.scrollZoom.disable(); // Disable zoom only if it's enabled
+		  }
+
+		});
+
+		map.addControl(new mapboxgl.NavigationControl());
+
+		map.on('load', function() {
+			map.addSource('choropleth', {
+				'type': 'geojson',
+				'data': geojson
+			});
+			map.addLayer({
+				'id': 'choropleth',
+				'type': 'fill',
+				'source': 'choropleth',
+				'layout': {},
+				'paint': {
+					'fill-color': [
+						'interpolate',
+						['linear'],
+						['get', 'value'],
+						0,
+						'rgba(215, 227, 244, 0.7)',
+						3000,
+						'rgba(37, 51, 132, 0.9)'
+					],
+					'fill-opacity': 0.5
+				}
+			}, "building");
+			map.addLayer({
+				'id': 'choropleth-stroke',
+				'type': 'line',
+				'source': 'choropleth',
+				'layout': {},
+				'paint': {
+        "line-color": "rgba(37, 51, 132, 0.9)",
+        "line-width": {
+          "stops": [
+            [
+              10,
+              0.5
+            ],
+            [
+              12,
+              2
+            ]
+          ]
+        },
+        "line-blur": 0.5,
+        "line-opacity": 0.1
+				}
+			}, "building");
+			console.log(map.getStyle())
+		});
+
+
+	}
+</script>
+
