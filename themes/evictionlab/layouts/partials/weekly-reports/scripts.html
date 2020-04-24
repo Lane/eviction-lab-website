@@ -1,224 +1,227 @@
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.min.js"></script>
-
+<script type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.min.js"></script>
+<script type="text/javascript" src="https://unpkg.com/deepmerge@4.2.2/dist/umd.js"></script>
+<script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
+<script type="text/javascript" src="/js/weekly-reports/LineChart.js"></script>
 <script>
 
-	function slugify(string) {
-	  const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;'
-	  const b = 'aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrsssssttuuuuuuuuuwxyyzzz------'
-	  const p = new RegExp(a.split('').join('|'), 'g')
+  var chart1 = {{ .Params.chart1data }}
+  var chart2 = {{ .Params.chart2data }}
 
-	  return string.toString().toLowerCase()
-	    .replace(/\s+/g, '-') // Replace spaces with -
-	    .replace(p, c => b.charAt(a.indexOf(c))) // Replace special characters
-	    .replace(/&/g, '-and-') // Replace & with 'and'
-	    .replace(/[^\w\-]+/g, '') // Remove all non-word characters
-	    .replace(/\-\-+/g, '-') // Replace multiple - with single -
-	    .replace(/^-+/, '') // Trim - from start of text
-	    .replace(/-+$/, '') // Trim - from end of text
-	}
+  function slugify(string) {
+    var a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;'
+    var b = 'aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrsssssttuuuuuuuuuwxyyzzz------'
+    var p = new RegExp(a.split('').join('|'), 'g')
 
-  function getCurrentURL() {
-  	return window.location.protocol+'//'+window.location.host+window.location.pathname
+    return string.toString().toLowerCase()
+      .replace(/\s+/g, '-') // Replace spaces with -
+      .replace(p, function (c) { return b.charAt(a.indexOf(c)) }) // Replace special characters
+      .replace(/&/g, '-and-') // Replace & with 'and'
+      .replace(/[^\w\-]+/g, '') // Remove all non-word characters
+      .replace(/\-\-+/g, '-') // Replace multiple - with single -
+      .replace(/^-+/, '') // Trim - from start of text
+      .replace(/-+$/, '') // Trim - from end of text
   }
 
-  $(document).ready(function() {
+  function getCurrentURL() {
+    return window.location.protocol + '//' + window.location.host + window.location.pathname
+  }
+
+  /**
+   * Function to parse month strings and make them for
+   * the current year 
+   */
+  var monthParser = function(d) {
+    d = d + ' 2020' // TODO: don't hardcode 2020
+    var parser = d3.timeParse("%B %Y")
+    return parser(d)
+  }
+
+  /**
+   * Pads the X extent to cover all months
+   */
+  var xPadExtent = function(extent) {
+    return [ 
+      d3.timeMonth.floor(extent[0]), 
+      d3.timeMonth.ceil(extent[1]) 
+    ]
+  }
+
+  /**
+   * Pads the extent by a % value provided
+   * @param {[number, number]} extent
+   * @param {number} padding (percent to pad)
+   * @returns {[number, number]} [min, max]
+   */
+  var yPadExtent = function (extent) {
+    var padding = 0.05
+    var range = extent[1] - extent[0]
+    var pad = padding * range
+    return [extent[0], extent[1] + pad]
+  }
+
+  function createConfig(config) {
+    var BASE_CONFIG = {
+      parse: {
+        x: monthParser,
+        y: parseFloat,
+        area: d3.timeParse("%d/%m/%Y")
+      },
+      format: {
+        x: d3.timeFormat("%b"),
+        y: d3.format(",d"),
+        xTooltip: d3.timeFormat("%B"),
+        yTooltip: d3.format(",d"),
+        area: d3.timeFormat("%d/%m/%Y"),
+        label: function(id) { return id }
+      },
+      view: {
+        type: "bar",
+        xTicks: d3.timeMonth.every(1),
+        yTicks: 5
+      },
+      extent: {
+        xPad: xPadExtent,
+        yPad: yPadExtent
+      }
+    }
+    return deepmerge(BASE_CONFIG, config)
+  }
+
+  var LINE_CHART_CONFIG = createConfig({
+    url: chart2,
+    groupType: 'row',
+    data: {
+      area: ['start_of_moratorium', 'end_of_moratorium'],
+      x: 'month',
+      y: {
+        'groupBy': 'group',
+        col: 'month_diff'
+      },
+      extra: ['month_last_day'],
+    },
+    format: {
+      y: d3.format(",.0%"),
+      yTooltip: d3.format(",.0%"),
+    },
+    view: {
+      type: "line",
+    }
+  });
+
+
+  $(document).ready(function () {
 
     $('.table').tablesorter()
 
-    $('.table__row').click(function() {
-    	const placeName = $(this).data("name")
-    	if(placeName) {
-    		const slug = slugify(placeName)
-    		window.location.href = getCurrentURL() + slug
-    	}
+    $('.table__row').click(function () {
+      var placeName = $(this).data("name")
+      if (placeName) {
+        var slug = slugify(placeName)
+        window.location.href = getCurrentURL() + slug
+      }
     })
 
+
+    var CHART_1_CONFIG = createConfig({
+      url: chart1,
+      groupType: 'col',
+      id: 'filings',
+      title: 'Monthly Eviction Filings',
+      data: {
+        x: 'month',
+        y: {
+          cols: [
+            'avg_filings',
+            'month_filings'
+          ]
+        },
+        extra: ['month_last_day'],
+      }
+    });
+
+    var CHART_1A_CONFIG = createConfig({
+      url: chart1,
+      groupType: 'col',
+      id: 'avg',
+      title: 'Monthly Eviction Filings Relative To Average',
+      data: {
+        x: 'month',
+        y: {
+          cols: [
+            'percentage_diff'
+          ]
+        },
+        extra: ['month_last_day'],
+      },
+      format: {
+        y: d3.format(",.0%"),
+        yTooltip: d3.format(",.0%"),
+      }
+    })
+
+    var button1 = $('#toggleChartOne')
+    var currentConfig = CHART_1_CONFIG
+
+    createChart("#filingsChart", CHART_1_CONFIG, function(chart) {
+      button1.on("click", function() {
+        if (currentConfig.id === 'avg') {
+          currentConfig = CHART_1_CONFIG
+        } else {
+          currentConfig = CHART_1A_CONFIG
+        }
+        chart.update(currentConfig)
+      })
+    })
+
+    var CHART_2_CONFIG = createConfig({
+      url: chart2,
+      groupType: 'row',
+      id: 'diff',
+      title: '',
+      data: {
+        x: 'month',
+        y: {
+          'groupBy': 'group',
+          col: 'month_diff'
+        },
+        extra: ['month_last_day'],
+      },
+      format: {
+        y: d3.format(",.0%"),
+        yTooltip: d3.format(",.0%"),
+      }
+    });
+
+    var CHART_2A_CONFIG = createConfig({
+      url: chart2,
+      groupType: 'row',
+      id: 'filings',
+      data: {
+        x: 'month',
+        y: {
+          'groupBy': 'group',
+          col: 'month_filings'
+        },
+        extra: ['month_last_day'],
+      }
+    })
+
+    var button2 = $('#toggleChartTwo')
+    var config2 = CHART_2_CONFIG
+
+    createChart("#raceChart", config2, function(chart) {
+      console.log(chart)
+      button2.on("click", function() {
+        if (config2.id === 'diff') {
+          config2 = CHART_2A_CONFIG
+        } else {
+          config2 = CHART_2_CONFIG
+        }
+        chart.update(config2)
+      })
+      // setTimeout(function() { chart.update(LINE_CHART_CONFIG) }, 4000)
+    })
+    
   })
 </script>
-
-
-<style>
-
-  /** hero */
-
-    .graphic-header {
-      background: #555;
-    }
-
-  /** end hero */
-
-  /** page layout */ 
-
-    .layout {
-      display: flex;
-      justify-content: center;
-      flex-direction: row-reverse;
-      max-width: 1200px;
-      margin: auto;
-      padding: 24px;
-    }
-    .layout > .column--content {
-      flex: 1;
-      max-width: 720px;
-    }
-
-  /** end page layout */
-
-
-  /** table base */
-
-    .table { position: relative; }
-
-    .table__head th,
-    .table__body td {
-      border: none;
-      padding: 8px;
-      vertical-align: middle;
-    }
-    /** zebra stripe rows */
-    .table__row:nth-child(2n) {
-      background-color: #f5f9ff    
-    }
-    /** row hover color */
-    .table__body .table__row:hover {
-      cursor: pointer;
-      background: rgba(226,64,0,0.1);
-    }
-
-    @media (min-width: 768px) {
-      .table__head th,
-      .table__body td {
-        padding: 16px;
-      }
-    }
-
-  /** end table base  */
-
-
-  /** table header row */
-
-    .table {
-      border-collapse: separate;
-    }
-
-    .table__head {
-      text-transform: uppercase;
-      color: #737373;
-      font-family: GT-Eesti-Display-Bold,sans-serif;
-      font-size: 1.2rem;
-      text-align: left;
-    }
-    .table__head th {
-      position: sticky;
-      top: 56px;
-      background: #fff;
-    }
-    .table__head .table__cell:hover {
-      text-decoration: underline;
-      cursor: pointer;
-    }
-    .table__head .table__cell:focus {
-      outline: none;
-      border-bottom-color: #e24000;
-    }
-    /** ignore button column header */
-    .table__head .table__cell--button {
-      pointer-events: none
-    }
-    @media(min-width: 768px) {
-      .table__head {
-        font-size: 1.5rem;
-      }
-    }
-
-  /** end table header row */
-
-
-  /** table body */
-
-    /** table name column */ 
-
-      .table__body .table__cell--name {
-        font-family: GT-Eesti-Display-Bold,sans-serif;
-        text-transform: uppercase;
-        color: #434778;
-        font-size: 1.4rem;
-      }
-
-      @media(min-width: 768px) {
-        .table__body .table__cell--name { font-size: 2.1rem; }
-      }
-
-    /** end table name column */
-
-    /** table number column */ 
-
-      .table__body .table__cell--number {
-        font-family: GT-Eesti-Display-Bold,sans-serif;
-        text-transform: uppercase;
-        font-size: 1.4rem;
-      }
-
-      @media(min-width: 768px) {
-        .table__body .table__cell--number { font-size: 1.8rem; }
-      }
-
-    /** end table number column */ 
-
-
-    /** table button column */
-
-      .table__cell--button {
-        display: none;
-        padding:0;
-        width: 176px;
-      }
-
-      .table__cell--button .btn {
-        padding: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        line-height:1;
-        font-family: GT-Eesti-Display-Bold,sans-serif;
-        text-transform: uppercase;
-        font-size: 1.4rem;
-        color: #999;
-      }
-      .table__row:hover .table__cell--button .btn {
-        color: #e24000;
-      }
-      .table__cell--button .btn .fa {
-        margin-left: 8px;
-      }
-
-      @media(min-width: 1024px) {
-        .table__cell--button {
-          display: table-cell;
-        }
-      }
-
-    /** end table button column */
-
-  /** end table body */
-
-
-  /** table footer */
-
-    .caption {
-      font-size: 1.2rem;
-      color: #7d7d7d;
-    }
-    @media(min-width: 768px) {
-      .caption {
-        font-size: 1.4rem;
-      }
-    }
-
-  /** end table footer */
-
-  .column .subhead {
-    margin-bottom: 24px;
-  }
-
-</style>

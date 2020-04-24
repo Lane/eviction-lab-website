@@ -1,9 +1,4 @@
 {
   "runOnSave.commands": [
-    {
-      "match": ".*\\.html$",
-      "command": "killall hugo || hugo server -w=false",
-      "runIn": "backend"
-  }
   ]
 }

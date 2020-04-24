@@ -17,15 +17,20 @@
   </div>
 </div> -->
 
-  <div class="intro">
-    <div class="bordered-header primary">
-      <a href="/updates">{{ .Params.h1 }}</a>
-      <span class="subhead-rt date">April 14, 2020</span>
-    </div>
-    <p class="lead">
-      Brief introduction and summary of the data to follow, perhaps referencing the policy "score" for the area if it is available.  Could also contain any attributions and links if needed.
-    </p>
+<div class="intro">
+  <div class="bordered-header primary">
+    <a href="/updates">{{ .Params.h1 }}</a>
+    <span class="subhead-rt date">April 5, 2020</span>
   </div>
+  <p class="lead">
+    Brief introduction and summary of the data to follow, perhaps referencing the policy "score" for the area if it is
+    available. Could also contain any attributions and links if needed.
+  </p>
+  <div class="share">
+    <a href="#" class="share__link"><i class="fa fa-twitter"></i> <span>Share on Twitter</span></a>
+    <a href="#" class="share__link"><i class="fa fa-facebook"></i> <span>Share on Facebook</span></a>
+  </div>
+</div>
 
 
 <!--   <div class="section">
@@ -43,80 +48,123 @@
     </div>
   </div>
  -->
-  <div class="section section--chart section--compare-avg">
+<div class="section section--chart section--compare-avg">
+  <div class="section__content">
     <div class="details">
       <h2 class="title">How do eviction filings compare to an average week?</h2>
       <p class="description">
-        Short description of the key takeaway from the data this week.  Are evictions increasing / decreasing and are there any policies (or lack of) that are influencing the numbers in this area.
-      </p>
-      <div class="legend">
-        <div class="legend-item">
-          <div class="legend-item__color" style="background: #434878"></div>
-          <span class="legend-item__label">Average<sup>1</sup></span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-item__color"  style="background: #e24000"></div>
-          <span class="legend-item__label">Now<sup>2</sup></span>
-        </div>
-      </div>
-      <p class="footnote">
-        <sup>1</sup> Average evictions 2012 - 2016 <br />
-        <sup>2</sup> Data scraped from court systems by January Advisors
+        Short description of the key takeaway from the data this week. Are evictions increasing / decreasing and are there
+        any policies (or lack of) that are influencing the numbers in this area.
       </p>
     </div>
     <div class="visual">
-      {{ partial "weekly-reports/bar-chart" . }}
+      <div class="visual__header">
+        <h3 class="visual__title">Eviction Filings by Week</h3>
+        <button id="toggleChartOne">Toggle Relative to Average</button>
+      </div>
+      
+      <svg id="filingsChart" class="chart">
+        <pattern id="pattern-light" x="0" y="0" patternUnits="userSpaceOnUse" width="24" height="24" viewBox="0 0 8 8">
+          <g id="stripe1">
+            <rect x="-1" y="-1" width="18" height="2" transform="rotate(45 0 0)" class="stripe">
+              <rect x="0" y="0" width="18" height="2" transform="rotate(-45 0 0)" class="stripe--dark">
+          </g>
+          <use x="0" y="0" xlink:href="#stripe1" />
+        </pattern>
+      </svg>
     </div>
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-item__color" style="background: #434878"></div>
+        <span class="legend-item__label">Average<sup>1</sup></span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-item__color" style="background: #e24000"></div>
+        <span class="legend-item__label">Now<sup>2</sup></span>
+      </div>
+    </div>
+    <p class="footnote">
+      <sup>1</sup> Average evictions 2012 - 2016 <br />
+      <sup>2</sup> Data scraped from court systems by January Advisors
+    </p>
   </div>
+</div>
 
-  <div class="section section--map">
+<div class="section section--map">
+  <div class="section__content">
     <div class="details">
       <h2 class="title">Which neighborhoods are most impacted?</h2>
       <p class="description">
-        Short 
-      </p>
-      <p class="footnote">
-        
+        The map highlights eviction filings in the last 30 days, relative to the average filings in previous years. 
       </p>
     </div>
     <div class="visual">
       {{ partial "weekly-reports/map" . }}
     </div>
+    <div class="legend">
+      <div class="legend-choropleth">
+        <span class="legend-choropleth__title">Eviction Filings<sup>1</sup></span>
+        <div class="legend-choropleth__gradient"></div>
+        <div class="legend-choropleth__labels">
+          <span class="legend-choropleth__min">-100%</span>
+          <span class="legend-choropleth__mid">average</span>
+          <span class="legend-choropleth__max">+100%</span>
+        </div>
+      </div>
+    </div>
+    <p class="footnote">
+      <sup>1</sup> eviction filings relative to average between 2012 - 2016.
+    </p>
   </div>
+</div>
 
-  <div class="section section--chart section--race">
+<div class="section section--chart section--race">
+  <div class="section__content">
     <div class="details">
       <h2 class="title">Who is most impacted?</h2>
       <p class="description">
-        
-      </p>
-      <div class="legend">
-        <div class="legend-item">
-          <div class="legend-item__color" style="background: #94AABD"></div>
-          <span class="legend-item__label">Black</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-item__color" style="background: #2C897F"></div>
-          <span class="legend-item__label">Latinx</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-item__color" style="background: #e24000"></div>
-          <span class="legend-item__label">White</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-item__color" style="background: #434878"></div>
-          <span class="legend-item__label">Other</span>
-        </div>
-      </div>
-      <p class="footnote">
-        <sup>1</sup> sources / footnotes for this section
+        Highlight any disproportionate impact on racial groups.
       </p>
     </div>
     <div class="visual">
-      {{ partial "weekly-reports/line-chart" . }}
+      <div class="visual__header">
+        <h3 class="visual__title">Weekly eviction filings relative to average, by tract racial majority</h3>
+        <button id="toggleChartTwo">Toggle Relative to Average</button>
+      </div>
+      <svg id="raceChart" class="chart">
+        <pattern id="pattern-light" x="0" y="0" patternUnits="userSpaceOnUse" width="24" height="24" viewBox="0 0 8 8">
+          <g id="stripe">
+            <rect x="-1" y="-1" width="18" height="2" transform="rotate(45 0 0)" class="stripe">
+              <rect x="0" y="0" width="18" height="2" transform="rotate(-45 0 0)" class="stripe--dark">
+          </g>
+          <use x="0" y="0" xlink:href="#stripe" />
+        </pattern>
+      </svg>
     </div>
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-item__color" style="background: #434878"></div>
+        <span class="legend-item__label">Black</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-item__color" style="background: #2C897F"></div>
+        <span class="legend-item__label">Latinx</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-item__color" style="background: #e24000"></div>
+        <span class="legend-item__label">White</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-item__color" style="background: #94AABD"></div>
+        <span class="legend-item__label">Other</span>
+      </div>
+    </div>
+    <p class="footnote">
+      <sup>1</sup> sources / footnotes for this section
+    </p>
   </div>
-
+</div>
+<div id='tooltip' class="tooltip"></div>
 
 <!-- 
   <div class="column column--sidebar">
@@ -130,145 +178,5 @@
   </div>
  -->
 
-
-
-<style>
-  .layout {
-    display: flex;
-    max-width: 1200px;
-  }
-
-  .map {
-    width: 100%;
-    height:420px;
-    background:#ccc;
-  }
-
-  .section {
-    display: flex;
-    justify-content: stretch;
-    flex-direction: row;
-  }
-
-  .section:nth-child(2n-1) {
-    background: #f4f7f9;
-    flex-direction: row;
-  }
-
-  .section--chart .visual {
-    padding: 64px 40px;
-  }
-
-  .section .details {
-    min-width: 320px;
-    padding: 64px 40px;
-    flex:0.333;
-  }
-
-  .section .visual {
-    flex:0.666;
-  }
-
-  .section .details .title {
-    font-family: GT-Eesti-Display-Bold,sans-serif;
-    font-size: 2.4rem;
-    font-weight: 400;
-    letter-spacing: .07rem;
-    line-height: 1.42;
-    margin-bottom: 24px;
-  }
-
-  .intro {
-    position: relative;
-    max-width: 720px;
-    margin:auto;
-  }
-
-  .lead {
-    font-size: 1.8rem;
-    margin-top: 24px;
-    margin-bottom: 64px;
-    line-height: 1.42;
-    margin-right: 200px;
-  }
-
-
-  .subhead-rt.date {
-    font-family: Akkurat-Regular,sans-serif;
-    font-size: 1.6rem;
-    font-weight: 400;
-    color: #919191;
-  }
-
-  .bordered-header.primary,
-  .bordered-header.primary a {
-    color: #e04119;
-  }
-
-  .bordered-header.primary {
-    font-size: 2.1rem;
-    border-top: 3px solid;
-    margin-top: 40px;
-    padding-top: .6rem;
-  }
-
-  .graphic-header .center-page-wrapper {
-    background: none;
-  }
-
-
-  .legend-item {
-    display: flex;
-    align-items: center;
-    justify-content:flex-start;
-    margin-bottom: 16px;
-  }
-
-  .legend-item sup {
-    color: #7d7d7d;
-  }
-
-  .legend-item__color {
-    width: 16px;
-    height: 16px;
-    margin-right: 16px;
-    background: #999;
-  }
-
-  .legend-item__label {
-    line-height: 1;
-    font-family: GT-Eesti-Display-Bold,sans-serif;
-    font-size: 1.6rem;
-    font-weight: 400;
-    letter-spacing: .07rem;
-  }
-
-  .legend {
-    display:flex;
-    flex-direction: column;
-    margin-bottom: 16px;
-  }
-
-  .section .legend {
-    flex-direction: row;
-    flex-wrap: wrap;
-    max-width: 240px
-  }
-
-  .section .legend-item {
-    min-width:120px;
-  }
-
-  .footnote {
-      font-size: 1.2rem;
-      color: #7d7d7d;
-    }
-  @media(min-width: 768px) {
-    .footnote {
-      font-size: 1.4rem;
-    }
-  }
-  
-</style>
 
 {{ partial "footer" . }}

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
@@ -1578,6 +1578,11 @@
   </url>
   
   <url>
+    <loc>/eviction-watch/</loc>
+    <lastmod>2017-11-19T20:43:49-08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/contact/page-content/form2/</loc>
     <lastmod>2017-11-19T20:43:49-08:00</lastmod>
     <xhtml:link
@@ -1804,16 +1809,11 @@
   
   <url>
     <loc>/updates/events/2018-10-10-neighbor-to-neighbor/</loc>
-    <lastmod>1969-12-31T19:33:38-05:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/covid-eviction-map/</loc>
+    <lastmod>1969-12-31T17:33:38-07:00</lastmod>
   </url>
   
   <url>
     <loc>/categories/</loc>
-    <priority>0</priority>
     <xhtml:link
                 rel="alternate"
                 hreflang="es"
@@ -1827,14 +1827,55 @@
   </url>
   
   <url>
-    <loc>/about/page-content/</loc>
-    <lastmod>2017-11-26T03:54:30+00:00</lastmod>
-    <priority>0</priority>
+    <loc>/covid-eviction-map/</loc>
+  </url>
+  
+  <url>
+    <loc>/eviction-watch/boston-ma/</loc>
+  </url>
+  
+  <url>
+    <loc>/eviction-watch/cincinnati-oh/</loc>
+  </url>
+  
+  <url>
+    <loc>/eviction-watch/cleveland-oh/</loc>
+  </url>
+  
+  <url>
+    <loc>/eviction-watch/columbia-sc/</loc>
+  </url>
+  
+  <url>
+    <loc>/eviction-watch/el-paso-tx/</loc>
+  </url>
+  
+  <url>
+    <loc>/eviction-watch/evansville-in/</loc>
+  </url>
+  
+  <url>
+    <loc>/eviction-watch/houston-tx/</loc>
+  </url>
+  
+  <url>
+    <loc>/eviction-watch/las-cruces-nm/</loc>
+  </url>
+  
+  <url>
+    <loc>/eviction-watch/milwaukee-wi/</loc>
+  </url>
+  
+  <url>
+    <loc>/eviction-watch/richmond-va/</loc>
+  </url>
+  
+  <url>
+    <loc>/eviction-watch/st-louis-mo/</loc>
   </url>
   
   <url>
     <loc>/tags/</loc>
-    <priority>0</priority>
     <xhtml:link
                 rel="alternate"
                 hreflang="es"
