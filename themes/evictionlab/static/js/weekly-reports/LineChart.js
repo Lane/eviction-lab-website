@@ -178,12 +178,19 @@ function parseData(data, config) {
   return result
 }
 
-// {
-//   id: 'January',
-//   data: [
-//     'avg_filings': {x, y, extra}
-//   ]
-// }
+
+
+/**
+ * Groups items by a given selector
+ * {
+ *   id: 'January',
+ *   data: [
+ *     'avg_filings': {x, y, extra}
+ *   ]
+ * }
+ * @param {Array<DataItem>} items 
+ * @param {function} selector returns an item value to group by
+ */
 function groupItems(items, selector) {
   const xValues = items.reduce(function(values, item, i) {
     item.data.forEach(function (d) {
@@ -225,11 +232,12 @@ function LineChart(source, root, config) {
       root: el,
       area: el.append("rect")
         .attr("class", "chart__area"),
-      markLines: el.append("g").attr("class", "chart__mark-lines"),
+      
       yAxis: el.append('g')
         .attr("class", "chart__axis chart__axis--y"),
       xAxis: el.append('g')
         .attr("class", "chart__axis chart__axis--x"),
+      markLines: el.append("g").attr("class", "chart__mark-lines"),
       data: el.append('g').attr("class", "chart__data"),
       frame: el.append("rect")
         .attr("class", "chart__box"),
@@ -239,16 +247,22 @@ function LineChart(source, root, config) {
     }
   }
 
-  function renderBarTooltip(title, items, context) {
-    var flipped = (d3.event.pageX > (window.innerWidth - 320))
-    var space = flipped ? -32 : 32;
 
+
+  function renderBarTooltip(title, items, context) {
+    var xFlipped = (d3.event.pageX > (window.innerWidth - 320))
+    var yFlipped = (d3.event.clientY > (window.innerHeight - 140))
+    var space = 32;
     context.els.tooltip
-      .attr('class', 'chart__tooltip' + (flipped ? ' chart__tooltip--flip' : ''))
+      .attr('class', 'chart__tooltip')
+      .attr('style', 'transform: translate(' + 
+        (xFlipped ? '-100%' : '0') + ', ' +
+        (yFlipped ? '-100%' : '0') + 
+      ')')
       .html('<h1>' + title + '</h1>')
       .style('display', 'block')
-      .style('left', d3.event.pageX + space + 'px')
-      .style('top', d3.event.pageY + 32 + 'px')
+      .style('left', d3.event.pageX + ((xFlipped ? -1 : 1) * space) + 'px')
+      .style('top', d3.event.pageY + ((yFlipped ? -1 : 1) * space) + 'px')
       .selectAll()
       .data(items).enter()
       .append('div')
@@ -256,40 +270,20 @@ function LineChart(source, root, config) {
       .html(function (d) { return '<span>' + d.name + ':</span> ' + d.value });
   }
 
-  /**
+/**
    * Renders the tooltip and hoverline
    * @param {*} items 
    * @param {*} els 
    * @param {*} event 
    */
-  function renderTooltip(items, els, event) {
-
-    var flipped = (d3.event.pageX > (window.innerWidth - 320))
-    var space = flipped ? -32 : 32;
-
-    items.sort(function (a, b) {
-      return b.data[event.x.index].y - a.data[event.x.index].y;
-    })
-
-    els.hoverLine
+  function renderHoverLine(position, context) {
+    context.els.hoverLine
       .attr('class', 'chart__marker-line chart__marker-line--hover')
-      .attr('style', `transform: translateX(${event.x.position}px)`)
+      .attr('style', `transform: translateX(${position}px)`)
       .attr('x1', 0)
       .attr('x2', 0)
       .attr('y1', 0)
-      .attr('y2', event.height);
-
-    els.tooltip
-      .attr('class', 'chart__tooltip' + (flipped ? ' chart__tooltip--flip' : ''))
-      .html('<h1>' + config.format.xTooltip(event.x.value) + '</h1>')
-      .style('display', 'block')
-      .style('left', d3.event.pageX + space + 'px')
-      .style('top', d3.event.pageY + 32 + 'px')
-      .selectAll()
-      .data(items).enter()
-      .append('div')
-      .attr('class', function (d) { return 'chart__tooltip-row chart__tooltip-row--' + d.idx })
-      .html(function (d) { return '<span>' + d.name + ':</span> ' + config.format.yTooltip(d.data[event.x.index].y) });
+      .attr('y2', context.height);
   }
 
   function renderBars(data, config, context) {
@@ -302,20 +296,22 @@ function LineChart(source, root, config) {
 
     var group = context.els.data.selectAll(".chart__bar-group")
       .data(groupedData)
-    
+
+    function getHoverItem(item, i) {
+      return {
+        idx: i,
+        name: config.format.label(item.id),
+        value: chartConfig.format.yTooltip(item.value.y)
+      }
+    }
+
     // enter each group
     var groupEnter = group.enter().append("g")
       .attr("transform",function(d) { return "translate(" + context.x(new Date(2020, d.id, 1)) + ",0)"; })
       .attr("class", "chart__bar-group")
       .on('mousemove', function(d) {
         var title = config.format.xTooltip(d.data[0].value.x)
-        var items = d.data.map(function (item, i) {
-          return {
-            idx: i,
-            name: config.format.label(item.id),
-            value: config.format.yTooltip(item.value.y)
-          }
-        });
+        var items = d.data.map(getHoverItem);
         renderBarTooltip(title, items, context)
       })
       .on('mouseout', function () {
@@ -324,7 +320,7 @@ function LineChart(source, root, config) {
       })
       
     var groupBars = groupEnter.selectAll("rect")
-      .data(function(d) { console.log('dddd', d.data); return d.data; })
+      .data(function(d) { return d.data; })
       
     // add bars for new groups
     groupBars.enter().append("rect")
@@ -448,8 +444,7 @@ function LineChart(source, root, config) {
     )
       markLineData.push({ 
         point: data.area[0], 
-        line1: 'start of', 
-        line2: 'moratorium' 
+        lines: ['start of', 'moratorium'] 
       })
     if (
       data.area[1] > context.xExtent[0] && 
@@ -457,8 +452,7 @@ function LineChart(source, root, config) {
     )
       markLineData.push({ 
         point: data.areaEnd, 
-        line1: 'end of', 
-        line2: 'moratorium' 
+        lines: ['end of', 'moratorium'] 
       })
 
     // moratorium lines
@@ -485,13 +479,62 @@ function LineChart(source, root, config) {
       .attr('class', 'chart__mark-label')
       .merge(markLabel)
       .html(function(d) { 
-        return  '<tspan text-anchor="middle" dx="0">' + d.line1 + '</tspan>' + 
-                '<tspan text-anchor="middle" dx="-52" dy="16">' + d.line2 + '</tspan>' 
+        return d.lines.map(function (l,i) {
+          return '<tspan text-anchor="middle" dx="0" dy="'+ i * 16 +'">' + l + '</tspan>' 
+        }).join('') 
       })
       .attr('text-anchor', 'middle')
       .attr('alignment-baseline', 'middle')
       .attr('x', function(d) { return context.x(d.point) })
       .attr('y', context.height + 44);
+  }
+
+  function renderMarkLine(data, config, context) {
+    console.log(config.markLines)
+    // y axis mark lines
+    var markLine = context.els.markLines
+      .selectAll(".chart__mark-line--y")
+      .data(config.markLines)
+
+    markLine
+      .enter()
+      .append('line')
+      .attr('class', 'chart__mark-line--y')
+      .attr('x1', d => 0)
+      .attr('x2', d => margin.left + context.width)
+      .attr('y1', context.height)
+      .attr('y2', context.height)
+      .merge(markLine)
+      .transition()
+      .duration(1000)
+      .attr('x1', d => 0)
+      .attr('x2', d => margin.left + context.width)
+      .attr('y1', d => context.y(d.y))
+      .attr('y2', d => context.y(d.y))
+      
+    markLine.exit()
+      .transition()
+      .duration(1000)
+      .attr('y1', context.height)
+      .attr('y2', context.height)
+      .remove()
+
+    var markLabel = context.els.markLines
+      .selectAll(".chart__mark-label--y")
+      .data(config.markLines)
+
+    markLabel
+      .enter()
+      .append('text')
+      .attr('class', 'chart__mark-label--y')
+      .merge(markLabel)
+      .html(function(d) {
+        return d.label
+      })
+      .attr('x', d => margin.left + context.width)
+      .attr('y', d => context.y(d.y))
+      
+
   }
 
   /**
@@ -525,7 +568,7 @@ function LineChart(source, root, config) {
   }
 
   /**
-   * Renders the hover area and add event handlers
+   * Renders the hover area and add event handlers for tooltip
    * @param {*} data 
    * @param {*} config 
    * @param {*} context 
@@ -544,17 +587,22 @@ function LineChart(source, root, config) {
           Math.abs(xHovered.getTime() - xNext.getTime())
           ? xNext : xPrev
       var xIndex = xSnapped === xNext ? dataIndex : dataIndex - 1
-
-      var event = {
-        width: context.width,
-        height: context.height,
-        x: {
-          position: context.x(xSnapped),
-          value: xSnapped,
-          index: xIndex
-        }
-      }
-      renderTooltip(data.items, context.els, event)
+      var title =  config.format.xTooltip(xSnapped)
+      // transform items into structure for tooltip
+      var items = data.items
+        .map(function (d, i) {
+          return {
+            idx: d.idx,
+            name: d.name,
+            value: config.format.yTooltip(d.data[xIndex].y)
+          }
+        })
+        .sort(function (a, b) {
+          return b.value - a.value;
+        })
+      var position = context.x(xSnapped)
+      renderHoverLine(position, conext)
+      renderBarTooltip(title, items, context)
     }
 
     var handleHoverOut = function () {
@@ -627,6 +675,7 @@ function LineChart(source, root, config) {
     config.view.type === "bar" && renderBars(data, config, context)
     renderFrame(data, config, context)
     config.data.markArea && renderMarkLines(data, config, context)
+    config.markLines && renderMarkLine(data, config, context)
     config.view.type === "line" && renderHoverArea(data, config, context)
     
   }

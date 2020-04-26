@@ -209,7 +209,11 @@
       </p>
     </div>
     <div class="visual">
-      <h3 class="visual__title">Eviction Filings by Week</h3>
+      <div class="visual__header">
+        <h3 class="visual__title">Eviction Filings by Week</h3>
+        <button id="toggleChartOne">Toggle Relative to Average</button>
+      </div>
+      
       <svg id="filingsChart" class="chart">
         <pattern id="pattern-light" x="0" y="0" patternUnits="userSpaceOnUse" width="24" height="24" viewBox="0 0 8 8">
           <g id="stripe1">
@@ -457,7 +461,10 @@ window.onload = function () {
       </p>
     </div>
     <div class="visual">
-      <h3 class="visual__title">Weekly eviction filings relative to average, by tract racial majority</h3>
+      <div class="visual__header">
+        <h3 class="visual__title">Weekly eviction filings relative to average, by tract racial majority</h3>
+        <button id="toggleChartTwo">Toggle Relative to Average</button>
+      </div>
       <svg id="raceChart" class="chart">
         <pattern id="pattern-light" x="0" y="0" patternUnits="userSpaceOnUse" width="24" height="24" viewBox="0 0 8 8">
           <g id="stripe">
@@ -645,7 +652,7 @@ window.onload = function () {
 </div>
 
   <script src="/js/lib.min.js"></script>
-  <script src="/js/main.js?1587578226"></script>
+  <script src="/js/main.js?1587769157"></script>
   
 
 
@@ -653,9 +660,13 @@ window.onload = function () {
   
     <script type="text/javascript"
   src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.min.js"></script>
+<script type="text/javascript" src="https://unpkg.com/deepmerge@4.2.2/dist/umd.js"></script>
 <script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
 <script type="text/javascript" src="/js/weekly-reports/LineChart.js"></script>
 <script>
+
+  var chart1 = "/reports/harris-county/chart1_w16.csv"
+  var chart2 = "/reports/harris-county/chart2_w16.csv"
 
   function slugify(string) {
     var a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;'
@@ -676,6 +687,82 @@ window.onload = function () {
     return window.location.protocol + '//' + window.location.host + window.location.pathname
   }
 
+  
+
+  var monthParser = function(d) {
+    d = d + ' 2020' 
+    var parser = d3.timeParse("%B %Y")
+    return parser(d)
+  }
+
+  
+
+  var xPadExtent = function(extent) {
+    return [ 
+      d3.timeMonth.floor(extent[0]), 
+      d3.timeMonth.ceil(extent[1]) 
+    ]
+  }
+
+  
+
+  var yPadExtent = function (extent) {
+    var padding = 0.05
+    var range = extent[1] - extent[0]
+    var pad = padding * range
+    return [extent[0], extent[1] + pad]
+  }
+
+  function createConfig(config) {
+    var BASE_CONFIG = {
+      parse: {
+        x: monthParser,
+        y: parseFloat,
+        area: d3.timeParse("%d/%m/%Y")
+      },
+      format: {
+        x: d3.timeFormat("%b"),
+        y: d3.format(",d"),
+        xTooltip: d3.timeFormat("%B"),
+        yTooltip: d3.format(",d"),
+        area: d3.timeFormat("%d/%m/%Y"),
+        label: function(id) { return id }
+      },
+      view: {
+        type: "bar",
+        xTicks: d3.timeMonth.every(1),
+        yTicks: 5
+      },
+      extent: {
+        xPad: xPadExtent,
+        yPad: yPadExtent
+      }
+    }
+    return deepmerge(BASE_CONFIG, config)
+  }
+
+  var LINE_CHART_CONFIG = createConfig({
+    url: chart2,
+    groupType: 'row',
+    data: {
+      area: ['start_of_moratorium', 'end_of_moratorium'],
+      x: 'month',
+      y: {
+        'groupBy': 'group',
+        col: 'month_diff'
+      },
+      extra: ['month_last_day'],
+    },
+    format: {
+      y: d3.format(",.0%"),
+      yTooltip: d3.format(",.0%"),
+    },
+    view: {
+      type: "line",
+    }
+  });
+
+
   $(document).ready(function () {
 
     $('.table').tablesorter()
@@ -688,35 +775,107 @@ window.onload = function () {
       }
     })
 
+
+    var CHART_1_CONFIG = createConfig({
+      url: chart1,
+      groupType: 'col',
+      id: 'filings',
+      title: 'Monthly Eviction Filings',
+      data: {
+        x: 'month',
+        y: {
+          cols: [
+            'avg_filings',
+            'month_filings'
+          ]
+        },
+        extra: ['month_last_day'],
+      }
+    });
+
+    var CHART_1A_CONFIG = createConfig({
+      url: chart1,
+      groupType: 'col',
+      id: 'avg',
+      title: 'Monthly Eviction Filings Relative To Average',
+      data: {
+        x: 'month',
+        y: {
+          cols: [
+            'percentage_diff'
+          ]
+        },
+        extra: ['month_last_day'],
+      },
+      format: {
+        y: d3.format(",.0%"),
+        yTooltip: d3.format(",.0%"),
+      }
+    })
+
+    var button1 = $('#toggleChartOne')
+    var currentConfig = CHART_1_CONFIG
+
+    createChart("#filingsChart", CHART_1_CONFIG, function(chart) {
+      button1.on("click", function() {
+        if (currentConfig.id === 'avg') {
+          currentConfig = CHART_1_CONFIG
+        } else {
+          currentConfig = CHART_1A_CONFIG
+        }
+        chart.update(currentConfig)
+      })
+    })
+
+    var CHART_2_CONFIG = createConfig({
+      url: chart2,
+      groupType: 'row',
+      id: 'diff',
+      title: '',
+      data: {
+        x: 'month',
+        y: {
+          'groupBy': 'group',
+          col: 'month_diff'
+        },
+        extra: ['month_last_day'],
+      },
+      format: {
+        y: d3.format(",.0%"),
+        yTooltip: d3.format(",.0%"),
+      }
+    });
+
+    var CHART_2A_CONFIG = createConfig({
+      url: chart2,
+      groupType: 'row',
+      id: 'filings',
+      data: {
+        x: 'month',
+        y: {
+          'groupBy': 'group',
+          col: 'month_filings'
+        },
+        extra: ['month_last_day'],
+      }
+    })
+
+    var button2 = $('#toggleChartTwo')
+    var config2 = CHART_2_CONFIG
+
+    createChart("#raceChart", config2, function(chart) {
+      console.log(chart)
+      button2.on("click", function() {
+        if (config2.id === 'diff') {
+          config2 = CHART_2A_CONFIG
+        } else {
+          config2 = CHART_2_CONFIG
+        }
+        chart.update(config2)
+      })
+      
+    })
     
-    const avgChart = "/reports/harris-county/chart1.csv"
-
-    d3.csv(avgChart, function (data) {
-      if (data) {
-        var root = d3.select('#filingsChart').append('g')
-        const chart = LineChart(data, root, { yAxisFormat: ",d" })
-        window.addEventListener('resize', function () {
-          chart.render()
-        });
-      } else {
-        console.error('error loading data')
-      }
-    })
-
-    const raceChart = "/reports/harris-county/chart2.csv"
-
-    d3.csv(raceChart, function (data) {
-      if (data) {
-        var root = d3.select('#raceChart').append('g')
-        const chart = LineChart(data, root)
-        window.addEventListener('resize', function () {
-          chart.render()
-        });
-      } else {
-        console.error('error loading data')
-      }
-    })
-
   })
 </script>
   

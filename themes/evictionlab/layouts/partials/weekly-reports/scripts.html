@@ -145,6 +145,7 @@
       groupType: 'col',
       id: 'avg',
       title: 'Monthly Eviction Filings Relative To Average',
+      markLines: [],
       data: {
         x: 'month',
         y: {
@@ -179,6 +180,9 @@
       groupType: 'row',
       id: 'diff',
       title: '',
+      markLines: [
+        { y: 1, label: 'average filings' }
+      ],
       data: {
         x: 'month',
         y: {
@@ -197,6 +201,7 @@
       url: chart2,
       groupType: 'row',
       id: 'filings',
+      markLines: [],
       data: {
         x: 'month',
         y: {

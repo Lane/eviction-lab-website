@@ -345,6 +345,16 @@ body { overflow-x: hidden}
     text-align: center;
   }
 
+  .visual__header {
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media(min-width: 1024px) {
+
+  }
 
   .intro {
     position: relative;
@@ -574,6 +584,29 @@ body { overflow-x: hidden}
 .chart__line--3 {
   stroke: #94AABD;
 }
+
+
+.chart__bar--0 {
+  fill: #e24000;
+}
+.chart__bar--1 {
+  fill: #434878;
+}
+
+.chart__bar--2 {
+  fill: #2C897F;
+}
+.chart__bar--3 {
+  fill: #94AABD;
+}
+
+.section--compare-avg .chart__bar--0 {
+  fill: #434878;
+}
+.section--compare-avg .chart__bar--1 {
+  fill: #e24000;
+}
+
 
 .stripe {
   fill: #fff;
