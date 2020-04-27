@@ -397,6 +397,7 @@ body { overflow-x: hidden}
   .visual__toggle:hover,
   .visual__toggle:focus {
     color: #434878;
+    outline: none;
   }
 
   .visual__header {
@@ -733,22 +734,26 @@ body { overflow-x: hidden}
 }
 
 
-
 .chart__tooltip--flip {
   transform: translateX(-100%);
 }
 
 .map__tooltip-row {
   font-size: 12px;
-  height: 16px;
+  height: 32px;
   margin-top:-4px;
   margin-bottom: 4px;
   white-space: nowrap;
 }
 
+.map__tooltip-row em {
+  font-style: normal;
+  font-weight: 600;
+  color: rgba(255,255,255,0.7);
+}
+
 .map__tooltip-row span {
   margin-right:0;
-  
 }
 
 .map__tooltip-row--down span,

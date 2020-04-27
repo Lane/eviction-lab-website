@@ -185,33 +185,52 @@
 <div class="intro">
   <div class="bordered-header primary">
     <a href="/updates">Houston, Texas</a>
-    <span class="subhead-rt date">April 5, 2020</span>
+    <span class="subhead-rt date">April 18, 2020</span>
   </div>
   <p class="lead">
-    Brief introduction and summary of the data to follow, perhaps referencing the policy "score" for the area if it is
-    available. Could also contain any attributions and links if needed.
+    Eviction filings in the last week continue to be lower than the average from 2012 to 2016. 
+    An eviction moratorium is currently in place which has had a chilling effect on filings since it was invoked on March 19, 2020.
   </p>
+
+  <ul class="stats">
+    <li class="stats-item">
+      <strong class="stats-item__label">Filings Last Week</strong>
+      <span class="stats-item__value">187 (<span class="stats-item__diff arrow down">84%</span>)</span>
+      
+    </li>
+    <li class="stats-item">
+      <strong class="stats-item__label">Filings Last 30 days</strong>
+      <span class="stats-item__value">
+        1,442
+        (<span class="stats-item__diff arrow down">42%</span>)
+      </span>
+    </li>
+    <li class="stats-item">
+      <strong class="stats-item__label">Eviction Moratorium</strong>
+      <span class="stats-item__value">
+        March 19 - April 30, 2020
+
+      </span>
+    </li>
+  </ul>
   <div class="share">
     <a href="#" class="share__link"><i class="fa fa-twitter"></i> <span>Share on Twitter</span></a>
     <a href="#" class="share__link"><i class="fa fa-facebook"></i> <span>Share on Facebook</span></a>
   </div>
 </div>
 
-
-
 <div class="section section--chart section--compare-avg">
   <div class="section__content">
     <div class="details">
-      <h2 class="title">How do eviction filings compare to an average week?</h2>
+      <h2 class="title">How do eviction filings compare to average this time of year?</h2>
       <p class="description">
-        Short description of the key takeaway from the data this week. Are evictions increasing / decreasing and are there
-        any policies (or lack of) that are influencing the numbers in this area.
+        The number of eviction filings in Harris County were higher than average at the beginning of the year. The number of filings have dropped to below average numbers during the eviction moratorium put in place on March 19.
       </p>
     </div>
     <div class="visual">
       <div class="visual__header">
         <h3 class="visual__title">Eviction Filings by Week</h3>
-        <button id="toggleChartOne">Toggle Relative to Average</button>
+        <button class="visual__toggle" id="toggleChartOne">Toggle Relative to Average</button>
       </div>
       
       <svg id="filingsChart" class="chart">
@@ -224,20 +243,8 @@
         </pattern>
       </svg>
     </div>
-    <div class="legend">
-      <div class="legend-item">
-        <div class="legend-item__color" style="background: #434878"></div>
-        <span class="legend-item__label">Average<sup>1</sup></span>
-      </div>
-      <div class="legend-item">
-        <div class="legend-item__color" style="background: #e24000"></div>
-        <span class="legend-item__label">Now<sup>2</sup></span>
-      </div>
-    </div>
-    <p class="footnote">
-      <sup>1</sup> Average evictions 2012 - 2016 <br />
-      <sup>2</sup> Data scraped from court systems by January Advisors
-    </p>
+    <div class="legend"></div>
+    <p class="footnote"></p>
   </div>
 </div>
 
@@ -246,7 +253,7 @@
     <div class="details">
       <h2 class="title">Which neighborhoods are most impacted?</h2>
       <p class="description">
-        The map highlights eviction filings in the last 30 days, relative to the average filings in previous years. 
+        The map highlights eviction filings by census tract since March 22, 2020.  The eviction moratorium has been in place since March 19, yet some areas are still experiencing more eviction filings than previous years.
       </p>
     </div>
     <div class="visual">
@@ -434,10 +441,10 @@ window.onload = function () {
 	})
 }
 </script>
-    </div>
+    </div> 
     <div class="legend">
       <div class="legend-choropleth">
-        <span class="legend-choropleth__title">Eviction Filings<sup>1</sup></span>
+        <span class="legend-choropleth__title">Eviction Filings <span>last 30 days</span></span>
         <div class="legend-choropleth__gradient"></div>
         <div class="legend-choropleth__labels">
           <span class="legend-choropleth__min">-100%</span>
@@ -457,13 +464,13 @@ window.onload = function () {
     <div class="details">
       <h2 class="title">Who is most impacted?</h2>
       <p class="description">
-        Highlight any disproportionate impact on racial groups.
+        Since the moratorium invoke on March 19, eviction filings for all demographics have dropped to below average numbers.
       </p>
     </div>
     <div class="visual">
       <div class="visual__header">
         <h3 class="visual__title">Weekly eviction filings relative to average, by tract racial majority</h3>
-        <button id="toggleChartTwo">Toggle Relative to Average</button>
+        <button class="visual__toggle" id="toggleChartTwo">Toggle Relative to Average</button>
       </div>
       <svg id="raceChart" class="chart">
         <pattern id="pattern-light" x="0" y="0" patternUnits="userSpaceOnUse" width="24" height="24" viewBox="0 0 8 8">
@@ -652,7 +659,7 @@ window.onload = function () {
 </div>
 
   <script src="/js/lib.min.js"></script>
-  <script src="/js/main.js?1587769157"></script>
+  <script src="/js/main.js?1587958565"></script>
   
 
 
@@ -713,6 +720,19 @@ window.onload = function () {
     return [extent[0], extent[1] + pad]
   }
 
+  var formatLabel = function (id) {
+    switch(id) {
+      case 'avg_filings':
+        return "Average Filings"
+      case 'month_filings':
+        return "Filings This Year"
+      case 'percentage_diff':
+        return "Filings This Year <br /><span>relative to average</span>"
+      default:
+        return id
+    }
+  }
+
   function createConfig(config) {
     var BASE_CONFIG = {
       parse: {
@@ -726,7 +746,7 @@ window.onload = function () {
         xTooltip: d3.timeFormat("%B"),
         yTooltip: d3.format(",d"),
         area: d3.timeFormat("%d/%m/%Y"),
-        label: function(id) { return id }
+        label: formatLabel
       },
       view: {
         type: "bar",
@@ -740,28 +760,6 @@ window.onload = function () {
     }
     return deepmerge(BASE_CONFIG, config)
   }
-
-  var LINE_CHART_CONFIG = createConfig({
-    url: chart2,
-    groupType: 'row',
-    data: {
-      area: ['start_of_moratorium', 'end_of_moratorium'],
-      x: 'month',
-      y: {
-        'groupBy': 'group',
-        col: 'month_diff'
-      },
-      extra: ['month_last_day'],
-    },
-    format: {
-      y: d3.format(",.0%"),
-      yTooltip: d3.format(",.0%"),
-    },
-    view: {
-      type: "line",
-    }
-  });
-
 
   $(document).ready(function () {
 
@@ -780,7 +778,26 @@ window.onload = function () {
       url: chart1,
       groupType: 'col',
       id: 'filings',
-      title: 'Monthly Eviction Filings',
+      legend: '.section--compare-avg .legend',
+      content: [
+        {
+          selector: '.section--compare-avg .visual__title',
+          text: 'Monthly Eviction Filings'
+        },
+        {
+          selector: '.section--compare-avg .visual__toggle',
+          text: 'Show relative to average'
+        },
+        {
+          selector: '.section--compare-avg .footnote',
+          text: [
+            'Average filings taken from 2012 - 2016',
+            'Filings for this year provided by January Advisors',
+            'Partial filings for April, as of April 18'
+          ].map((l,i) => `<span><sup>${i+1}</sup> ${l}</span>`).join('')
+        }
+      ],
+      markLines: [],
       data: {
         x: 'month',
         y: {
@@ -790,14 +807,35 @@ window.onload = function () {
           ]
         },
         extra: ['month_last_day'],
-      }
+      },
     });
 
     var CHART_1A_CONFIG = createConfig({
       url: chart1,
       groupType: 'col',
       id: 'avg',
-      title: 'Monthly Eviction Filings Relative To Average',
+      legend: '.section--compare-avg .legend',
+      content: [
+        {
+          selector: '.section--compare-avg .visual__title',
+          text: 'Monthly Eviction Filings Relative To Average'
+        },
+        {
+          selector: '.section--compare-avg .visual__toggle',
+          text: 'Show filing count'
+        },
+        {
+          selector: '.section--compare-avg .footnote',
+          text: [
+            'Average filings taken from 2012 - 2016',
+            'Filings for this year provided by January Advisors',
+            'Partial filings for April, as of April 18'
+          ].map((l,i) => `<span><sup>${i+1}</sup> ${l}</span>`).join('')
+        }
+      ],
+      markLines: [
+        { y: 1, label: 'average filings' }
+      ],
       data: {
         x: 'month',
         y: {
@@ -809,9 +847,129 @@ window.onload = function () {
       },
       format: {
         y: d3.format(",.0%"),
+        xTooltip: d3.timeFormat("%B %Y"),
         yTooltip: d3.format(",.0%"),
+        tooltip: function (d) {
+          var distance = d._raw.y - 1
+          var value = Math.abs(distance)
+				  var dir = distance === 0 ? 'mid' : (distance > 0 ? 'up' : 'down')
+          if (dir === 'mid') { return 'Filings about average.'}
+          return '<div class="tooltip__item tooltip__item--single tooltip__item--'+ dir +'">' + 
+              'Filings&nbsp;<span>' + dir + ' ' + d3.format(",.0%")(value) + '</span>&nbsp;from average' +
+              (d._raw.extras['month_last_day'] ? ', <br />as of '+ d._raw.extras['month_last_day'] : '') +
+            '.</div>'
+        }
       }
     })
+    
+    var CHART_2_CONFIG = createConfig({
+      url: chart2,
+      groupType: 'row',
+      id: 'diff',
+      legend: '.section--race .legend',
+      content: [
+        {
+          selector: '.section--race .visual__title',
+          text: 'Filings relative to average, by tract racial majority'
+        },
+        {
+          selector: '.section--race .visual__toggle',
+          text: 'Show filing count'
+        },
+        {
+          selector: '.section--race .footnote',
+          text: [
+            'Average filings taken from 2012 - 2016',
+            'Partial filings shown for April, as of April 18'
+          ].map((l,i) => `<span><sup>${i+1}</sup> ${l}</span>`).join('')
+        }
+      ],
+      markLines: [
+        { y: 1, label: 'average filings' }
+      ],
+      data: {
+        x: 'month',
+        y: {
+          'groupBy': 'group',
+          col: 'month_diff'
+        },
+        extra: ['month_last_day'],
+      },
+      format: {
+        y: d3.format(",.0%"),
+        xTooltip: d3.timeFormat("%B %Y"),
+        yTooltip: d3.format(",.0%"),
+        tooltip: function (d) {
+          var distance = 1-d._raw.y
+          var value = Math.abs(distance)
+          var dir = distance === 0 ? 'mid' : (distance > 0 ? 'up' : 'down')
+          var str = (dir === 'mid')
+            ? 'average'
+            : d3.format(",.0%")(Math.abs(distance))
+          
+          return '<div class="tooltip__item tooltip__item--multi">' + 
+            '<span>' + d.name + ':</span> ' + 
+            '<span>' + d.value + '</span>' + 
+            '(<span class="arrow '+dir+'">' + str + '</span>)' +
+            '</div>'
+        }
+      }
+    });
+
+    var CHART_2A_CONFIG = createConfig({
+      url: chart2,
+      groupType: 'row',
+      id: 'filings',
+      legend: '.section--race .legend',
+      content: [
+        {
+          selector: '.section--race .visual__title',
+          text: 'Eviction filings by demographic'
+        },
+        {
+          selector: '.section--race .visual__toggle',
+          text: 'Show relative to average'
+        },
+        {
+          selector: '.section--race .footnote',
+          text: [
+            'Dots represent the average filings for each demographic.',
+            'Average filings taken from 2012 - 2016',
+            'Partial filings shown for April, as of April 18'
+          ].map((l,i) => `<span><sup>${i+1}</sup> ${l}</span>`).join('')
+        }
+      ],
+      markLines: [],
+      dots: 'avg_filings',
+      data: {
+        x: 'month',
+        y: {
+          'groupBy': 'group',
+          col: 'month_filings'
+        },
+        extra: ['month_last_day', 'avg_filings'],
+      },
+      format: {
+        tooltip: function (d) {
+          var distance = d._raw.extras['avg_filings'] - d._raw.y
+          var value = Math.abs(distance)
+          var dir = distance === 0 ? 'mid' : (distance > 0 ? 'up' : 'down')
+          var str = (dir === 'mid')
+            ? 'average'
+            : d3.format(",d")(Math.abs(distance))
+          
+          return '<div class="tooltip__item tooltip__item--multi">' + 
+            '<span>' + d.name + ':</span> ' + 
+            '<span>' + d.value + '</span>' + 
+            '(<span class="arrow '+dir+'">' + str + '</span>)' +
+            '</div>'
+        }
+      },
+      parse: {
+        'avg_filings': parseFloat
+      }
+    })
+
 
     var button1 = $('#toggleChartOne')
     var currentConfig = CHART_1_CONFIG
@@ -827,44 +985,10 @@ window.onload = function () {
       })
     })
 
-    var CHART_2_CONFIG = createConfig({
-      url: chart2,
-      groupType: 'row',
-      id: 'diff',
-      title: '',
-      data: {
-        x: 'month',
-        y: {
-          'groupBy': 'group',
-          col: 'month_diff'
-        },
-        extra: ['month_last_day'],
-      },
-      format: {
-        y: d3.format(",.0%"),
-        yTooltip: d3.format(",.0%"),
-      }
-    });
-
-    var CHART_2A_CONFIG = createConfig({
-      url: chart2,
-      groupType: 'row',
-      id: 'filings',
-      data: {
-        x: 'month',
-        y: {
-          'groupBy': 'group',
-          col: 'month_filings'
-        },
-        extra: ['month_last_day'],
-      }
-    })
-
     var button2 = $('#toggleChartTwo')
     var config2 = CHART_2_CONFIG
 
     createChart("#raceChart", config2, function(chart) {
-      console.log(chart)
       button2.on("click", function() {
         if (config2.id === 'diff') {
           config2 = CHART_2A_CONFIG
@@ -873,7 +997,6 @@ window.onload = function () {
         }
         chart.update(config2)
       })
-      
     })
     
   })

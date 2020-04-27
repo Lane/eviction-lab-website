@@ -1,0 +1,43 @@
+<div class="intro">
+  <div class="bordered-header primary">
+    <a href="#">{{ .Page.Params.h1 }}</a>
+    <span class="subhead-rt date">{{ .Page.Params.datadate }}</span>
+  </div>
+  <p class="lead">
+    {{ .Inner }}
+  </p>
+
+  <ul class="stats">
+    <li class="stats-item stats-item--week">
+      <strong class="stats-item__label">Filings Last Week</strong>
+      <span class="stats-item__value">
+        <span class="stats-item__count"></span>
+        (<span class="stats-item__diff"></span>)
+      </span>
+    </li>
+    <li class="stats-item stats-item--month">
+      <strong class="stats-item__label">Filings Last 4 Weeks</strong>
+      <span class="stats-item__value">
+        <span class="stats-item__count"></span>
+        (<span class="stats-item__diff"></span>)
+      </span>
+    </li>
+    <li class="stats-item stats-item--moratorium">
+      <strong class="stats-item__label">Eviction Moratorium</strong>
+      <span class="stats-item__value">
+        {{ .Get "moratorium" }}
+      </span>
+    </li>
+  </ul>
+  <div class="share">
+    <a class="share__link share__link--twitter"><i class="fa fa-twitter"></i> <span>Share on Twitter</span></a>
+    <a class="share__link share__link--facebook"><i class="fa fa-facebook"></i> <span>Share on Facebook</span></a>
+  </div>
+  <script>
+    var tableUrl = {{ .Page.Params.tabledata }}
+    var fips = {{ .Page.Params.fips }}
+    window.addEventListener('load', function() {
+      Elab.Table.createIntroTable(fips, tableUrl)
+    })
+  </script>
+</div>
