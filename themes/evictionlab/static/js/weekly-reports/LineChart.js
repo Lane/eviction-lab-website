@@ -1,5 +1,6 @@
 // TYPE DEFINITIONS
 
+
 function DataItem() {
   return {
     id: "",
@@ -9,11 +10,29 @@ function DataItem() {
   }
 }
 
+function TooltipItem() {
+  return {
+    idx: 0,
+    name: "",
+    value: 0
+  }
+}
+
+function GroupItems() {
+  return {
+    id: 'group',
+    data: [
+      { id: '', idx: 0, value: {x: 0, y: 0, extra: {}}}
+    ]
+  }
+}
+
 function ChartConfig() {
   return {
     groupType: "",
-    area: ["", ""],
+    markLines: [],
     data: { 
+      area: ["", ""],
       x: "", 
       y: {
         cols: [""]
@@ -99,7 +118,9 @@ function parseColumnItems(data, config) {
           y: config.parse.y(d[col]),
           // add extra columns to data
           extras: config.data.extra.reduce(function(obj, colName) { 
-            obj[colName] = d[colName]
+            obj[colName] = config.parse[colName] 
+              ? config.parse[colName](d[colName]) 
+              : d[colName]
             return obj
           }, {})
         }
@@ -120,7 +141,14 @@ function parseRowItems(data, config) {
       result[row[groupCol]] = []
     result[row[groupCol]].push({
       x: config.parse.x(row[config.data.x]),
-      y: config.parse.y(row[config.data.y.col])
+      y: config.parse.y(row[config.data.y.col]),
+      // add extra columns to data
+      extras: config.data.extra.reduce(function(obj, colName) { 
+        obj[colName] = config.parse[colName] 
+          ? config.parse[colName](row[colName]) 
+          : row[colName]
+        return obj
+      }, {})
     })
     return result
   }, {})
@@ -182,14 +210,9 @@ function parseData(data, config) {
 
 /**
  * Groups items by a given selector
- * {
- *   id: 'January',
- *   data: [
- *     'avg_filings': {x, y, extra}
- *   ]
- * }
  * @param {Array<DataItem>} items 
  * @param {function} selector returns an item value to group by
+ * @returns {GroupItems}
  */
 function groupItems(items, selector) {
   const xValues = items.reduce(function(values, item, i) {
@@ -202,9 +225,10 @@ function groupItems(items, selector) {
   return xValues.map(function (value) {
     return {
       id: value,
-      data: items.map(function(item) {
+      data: items.map(function(item, i) {
         return {
           id: item.id,
+          idx: item.idx || i,
           value: item.data.find(function(d) { 
             return selector(d) === value 
           })
@@ -218,10 +242,19 @@ function LineChart(source, root, config) {
 
   // options
   config = config || {}
-  var margin = config.margin || { top: 8, right: 24, bottom: 64, left: 40 };
+  var margin = config.margin || { top: 8, right: 24, bottom: 40, left: 40 };
   var parsedData;
   var elements;
   var chartConfig;
+
+  function getHoverItem(item, i) {
+    return {
+      idx: i,
+      name: chartConfig.format.label(item.id),
+      value: chartConfig.format.yTooltip(item.value.y),
+      _raw: item.value
+    }
+  }
 
   /**
    * Scaffolds all of the required elements to render the chart
@@ -247,9 +280,12 @@ function LineChart(source, root, config) {
     }
   }
 
-
-
-  function renderBarTooltip(title, items, context) {
+  function renderBarTooltip(title, items, context, render) {
+    render = render || function (d) { 
+      return '<div class="tooltip__item tooltip__item--multi">' + 
+              '<span>' + d.name + ':</span> ' + d.value +
+            '</div>'
+    }
     var xFlipped = (d3.event.pageX > (window.innerWidth - 320))
     var yFlipped = (d3.event.clientY > (window.innerHeight - 140))
     var space = 32;
@@ -267,7 +303,7 @@ function LineChart(source, root, config) {
       .data(items).enter()
       .append('div')
       .attr('class', function (d) { return 'chart__tooltip-row chart__tooltip-row--' + d.idx })
-      .html(function (d) { return '<span>' + d.name + ':</span> ' + d.value });
+      .html(render);
   }
 
 /**
@@ -297,53 +333,35 @@ function LineChart(source, root, config) {
     var group = context.els.data.selectAll(".chart__bar-group")
       .data(groupedData)
 
-    function getHoverItem(item, i) {
-      return {
-        idx: i,
-        name: config.format.label(item.id),
-        value: chartConfig.format.yTooltip(item.value.y)
-      }
-    }
-
     // enter each group
-    var groupEnter = group.enter().append("g")
-      .attr("transform",function(d) { return "translate(" + context.x(new Date(2020, d.id, 1)) + ",0)"; })
+    var groupEls = group.enter().append("g")
       .attr("class", "chart__bar-group")
       .on('mousemove', function(d) {
-        var title = config.format.xTooltip(d.data[0].value.x)
+        var title = chartConfig.format.xTooltip(d.data[0].value.x)
         var items = d.data.map(getHoverItem);
-        renderBarTooltip(title, items, context)
+        renderBarTooltip(title, items, context, chartConfig.format.tooltip)
       })
       .on('mouseout', function () {
         if (context.els.tooltip) 
           context.els.tooltip.style('display', 'none');
       })
+      .merge(group)
+      .attr("transform",function(d) { return "translate(" + context.x(new Date(2020, d.id, 1)) + ",0)"; })
       
-    var groupBars = groupEnter.selectAll("rect")
+    var groupBars = groupEls.selectAll("rect")
       .data(function(d) { return d.data; })
       
-    // add bars for new groups
-    groupBars.enter().append("rect")
-      .attr('class', function (d, i) { return 'chart__bar chart__bar--' + i })
+    groupBars
+      .enter()
+      .append("rect") // add bars for new groups
+      .attr('class', function (d, i) { return 'chart__bar chart__bar--' + d.idx })
       .attr("width", x1.bandwidth())
       .attr("x", function(d) { return x1(d.id); })
       .attr("y", function(d) { return context.y(0); })
       .attr("height", function(d) { return context.height - context.y(0); })
-      
-    // add any missing bars to existing groups
-    group.selectAll("rect")
-      .data(function(d) { console.log('dddd', d.data); return d.data; })
-      .enter().append("rect")
-      .attr('class', function (d, i) { return 'chart__bar chart__bar--' + i })
-      .attr("width", x1.bandwidth())
-      .attr("x", function(d) { return x1(d.id); })
-      .attr("y", function(d) { return context.y(0); })
-      .attr("height", function(d) { return context.height - context.y(0); })
-
-    // update existing bars
-    context.els.data.selectAll(".chart__bar")
+      .merge(groupBars) // merge existing bars for update
       .transition()
-      .delay(function (d, i) {return i*50;})
+      .delay(function (d, i) {return i*100;})
       .duration(1000)
       .attr("width", x1.bandwidth())
       .attr("x", function(d) { return x1(d.id); })
@@ -351,12 +369,9 @@ function LineChart(source, root, config) {
         return context.y(d.value.y); 
       })
       .attr("height", function(d) { return context.height - context.y(d.value.y); });
-
-    // remove bars from existing groups
-    group
-      .attr("transform",function(d) { return "translate(" + context.x(new Date(2020, d.id, 1)) + ",0)"; })
-      .selectAll("rect")
-      .data(function(d) { return d.data; })
+      
+    // remove bars groups
+    groupBars
       .exit()
       .transition()
       .duration(1000)
@@ -366,8 +381,40 @@ function LineChart(source, root, config) {
       .attr("height", function(d) { return context.height - context.y(0); })
       .remove()    
 
+    var groupDots = groupEls.selectAll("circle")
+      .data(function(d) { return config.dots ? d.data : []; })
+    
+    groupDots
+      .enter()
+      .append("circle") // add bars for new groups
+      .attr('class', function (d, i) { return 'chart__dot chart__dot--' + i })
+      .attr("r", 0)
+      .attr("cx", function(d) { return x1(d.id) + x1.bandwidth()/2; })
+      .attr("cy", function(d) { return context.y(0); })
+      .merge(groupBars) // merge existing bars for update
+      .transition()
+      .delay(function (d, i) {return i*100;})
+      .duration(1000)
+      .attr("r", 4)
+      .attr("cx", function(d) { return x1(d.id) + x1.bandwidth()/2; })
+      .attr("cy", function(d) {
+        console.log(d.value.extras[config.dots])
+        return context.y(d.value.extras[config.dots]); 
+      })
+      
+    // remove dots
+    groupDots
+      .exit()
+      .transition()
+      .duration(1000)
+      .attr("r", 0)
+      .attr("cx", function(d) { return x1(d.id) + x1.bandwidth()/2; })
+      .attr("cy", function(d) { return context.y(0); })
+      .remove()    
+  
+
+
     group.exit().remove()
-    // groupEnter.exit().remove()
   }
 
   /**
@@ -435,7 +482,7 @@ function LineChart(source, root, config) {
    * @param {*} config 
    * @param {*} context 
    */
-  function renderMarkLines(data, config, context) {
+  function renderAreaLines(data, config, context) {
     // setup mark line data
     var markLineData = []
     if (
@@ -490,7 +537,6 @@ function LineChart(source, root, config) {
   }
 
   function renderMarkLine(data, config, context) {
-    console.log(config.markLines)
     // y axis mark lines
     var markLine = context.els.markLines
       .selectAll(".chart__mark-line--y")
@@ -501,14 +547,14 @@ function LineChart(source, root, config) {
       .append('line')
       .attr('class', 'chart__mark-line--y')
       .attr('x1', d => 0)
-      .attr('x2', d => margin.left + context.width)
+      .attr('x2', d => context.width)
       .attr('y1', context.height)
       .attr('y2', context.height)
       .merge(markLine)
       .transition()
       .duration(1000)
       .attr('x1', d => 0)
-      .attr('x2', d => margin.left + context.width)
+      .attr('x2', d => context.width)
       .attr('y1', d => context.y(d.y))
       .attr('y2', d => context.y(d.y))
       
@@ -527,14 +573,26 @@ function LineChart(source, root, config) {
       .enter()
       .append('text')
       .attr('class', 'chart__mark-label--y')
+      .html(function(d) { return d.label })
+      .attr('x', d => context.width - 4)
+      .attr('y', d => context.height - 4)
+      .attr('fill-opacity', 0)
       .merge(markLabel)
-      .html(function(d) {
-        return d.label
-      })
-      .attr('x', d => margin.left + context.width)
-      .attr('y', d => context.y(d.y))
-      
+      .transition()
+      .duration(1000)
+      .attr('text-anchor', 'end')
+      .attr('x', d => context.width - 4)
+      .attr('y', d => context.y(d.y) - 4)
+      .attr('fill-opacity', 1)
 
+    markLabel
+      .exit()
+      .transition()
+      .duration(1000)
+      .attr('x', d => context.width - 4)
+      .attr('y', d => context.height - 4)
+      .attr('fill-opacity', 0)
+      .remove()
   }
 
   /**
@@ -594,7 +652,8 @@ function LineChart(source, root, config) {
           return {
             idx: d.idx,
             name: d.name,
-            value: config.format.yTooltip(d.data[xIndex].y)
+            value: config.format.yTooltip(d.data[xIndex].y),
+            _raw: d.data[xIndex].y
           }
         })
         .sort(function (a, b) {
@@ -602,7 +661,7 @@ function LineChart(source, root, config) {
         })
       var position = context.x(xSnapped)
       renderHoverLine(position, conext)
-      renderBarTooltip(title, items, context)
+      renderBarTooltip(title, items, context, config.format.tooltip)
     }
 
     var handleHoverOut = function () {
@@ -618,6 +677,27 @@ function LineChart(source, root, config) {
       .attr('opacity', 0)
       .on('mousemove', handleHover)
       .on('mouseout', handleHoverOut)
+  }
+
+  function renderContentUpdates(content) {
+    content.forEach(function(item) {
+      var el = document.querySelector(item.selector)
+      if (!el) throw new Error('no element found for selector: ' + item.selector)
+      el.innerHTML = item.text
+      console.log(el, item.text, item.selector)
+    })
+  }
+
+  function renderLegend(selector, items) {
+    var LegendItem = function(item) {
+      return '<div class="legend-item legend-item--'+ item.idx +'">' +
+        '<div class="legend-item__color"></div>' +
+        '<div class="legend-item__label">' + item.name + '</div>' +
+      '</div>'
+    }
+    var el = document.querySelector(selector)
+    if (!el) throw new Error('no element found for selector: ' + item.selector)
+    el.innerHTML = items.map(function(item) { return LegendItem(item) }).join('')
   }
 
   /**
@@ -670,14 +750,15 @@ function LineChart(source, root, config) {
     }
 
     renderAxis(data, config, context)
-    config.data.area && renderMarkArea(data, config, context)
+    config.data.markArea && renderMarkArea(data, config, context)
+    config.data.markArea && renderAreaLines(data, config, context)
     config.view.type === "line" && renderLines(data, config, context)
     config.view.type === "bar" && renderBars(data, config, context)
-    renderFrame(data, config, context)
-    config.data.markArea && renderMarkLines(data, config, context)
     config.markLines && renderMarkLine(data, config, context)
     config.view.type === "line" && renderHoverArea(data, config, context)
-    
+    renderFrame(data, config, context)
+    config.content && renderContentUpdates(config.content)
+    config.legend && renderLegend(config.legend, data.items)
   }
 
   function render() {
@@ -690,7 +771,6 @@ function LineChart(source, root, config) {
     if (newConfig)
       chartConfig = newConfig
     parsedData = parseData(source, chartConfig)
-    console.log('parsed data', parsedData, chartConfig)
     render()
   }
 
