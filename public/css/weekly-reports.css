@@ -67,14 +67,18 @@ body { overflow-x: hidden}
 
   .table {
     border-collapse: separate;
+    font-size: 1rem;
+    overflow-x: auto;
+    overflow-y: visible;
   }
 
   .table__head {
     text-transform: uppercase;
     color: #737373;
     font-family: GT-Eesti-Display-Bold, sans-serif;
-    font-size: 1.2rem;
+    font-size: 1.2em;
     text-align: left;
+    
   }
 
   .table__head th {
@@ -100,7 +104,7 @@ body { overflow-x: hidden}
 
   @media(min-width: 768px) {
     .table__head {
-      font-size: 1.5rem;
+      font-size: 1.5em;
     }
   }
 
@@ -109,18 +113,25 @@ body { overflow-x: hidden}
 
   /** table body */
 
+  .table__body,
+  .table__head,
+  .table__row {
+    min-width: 370px;
+    white-space: nowrap;
+  }
+
   /** table name column */
 
   .table__body .table__cell--name {
     font-family: GT-Eesti-Display-Bold, sans-serif;
     text-transform: uppercase;
     color: #434778;
-    font-size: 1.4rem;
+    font-size: 1.4em;
   }
 
   @media(min-width: 768px) {
     .table__body .table__cell--name {
-      font-size: 2.1rem;
+      font-size: 2.1em;
     }
   }
 
@@ -129,14 +140,27 @@ body { overflow-x: hidden}
   /** table number column */
 
   .table__body .table__cell--number {
-    font-family: GT-Eesti-Display-Bold, sans-serif;
-    text-transform: uppercase;
-    font-size: 1.4rem;
+    font-family: Gotham A,Gotham B,GT-Eesti-Display-Bold,sans-serif;
+    font-size: 1.4em;
+    font-weight: 500;
+    color: #434778;
+  }
+
+  .table__cell--number span {
+    font-size: 1em;
+    padding-left: 0.75em;
+  }
+  .table__cell--number span.down {
+    color: #2C897F;
+  }
+
+  .table__cell--number span.up {
+    color: #e24000;
   }
 
   @media(min-width: 768px) {
     .table__body .table__cell--number {
-      font-size: 1.8rem;
+      font-size: 1.8em;
     }
   }
 
@@ -159,7 +183,7 @@ body { overflow-x: hidden}
     line-height: 1;
     font-family: GT-Eesti-Display-Bold, sans-serif;
     text-transform: uppercase;
-    font-size: 1.4rem;
+    font-size: 1.4em;
     color: #999;
   }
 
@@ -184,13 +208,13 @@ body { overflow-x: hidden}
 
   /** table footer */
 
-  .caption {
+  .table + .footnote {
     font-size: 1.2rem;
     color: #7d7d7d;
   }
 
   @media(min-width: 768px) {
-    .caption {
+    .table + .footnote {
       font-size: 1.4rem;
     }
   }
@@ -242,6 +266,9 @@ body { overflow-x: hidden}
   }
   .stats-item__diff.down {
     color: #2C897F;
+  }
+  .stats-item__diff.up {
+    color: #e24000;
   }
 
   .map {
@@ -397,6 +424,7 @@ body { overflow-x: hidden}
   .visual__toggle:hover,
   .visual__toggle:focus {
     color: #434878;
+    outline: none;
   }
 
   .visual__header {
@@ -561,7 +589,7 @@ body { overflow-x: hidden}
   .legend-choropleth__gradient {
     width: 100%;
     height: 16px;
-    background: linear-gradient(to right,#2C897F, rgba(215, 227, 244, 0.7) 50%, #e24000);
+    background: linear-gradient(to right,#434878, rgba(225, 225, 225, 0.7) 50%, #e24000);
   }
 
   .legend-choropleth__labels {
@@ -733,22 +761,28 @@ body { overflow-x: hidden}
 }
 
 
-
 .chart__tooltip--flip {
   transform: translateX(-100%);
 }
 
 .map__tooltip-row {
   font-size: 12px;
-  height: 16px;
+  height: 32px;
   margin-top:-4px;
   margin-bottom: 4px;
   white-space: nowrap;
 }
 
+.map__tooltip-row em {
+  font-family: Akkurat-Regular,sans-serif;
+  font-weight: 500;
+  color: rgba(255,255,255,0.7);
+  display:block;
+  margin-top: 2px;
+}
+
 .map__tooltip-row span {
   margin-right:0;
-  
 }
 
 .map__tooltip-row--down span,

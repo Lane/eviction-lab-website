@@ -1,5 +1,64 @@
 var Elab = Elab || {};
 
+Elab.Utils = (function(Elab) {
+
+  /**
+   * Turns a string into a URL friendly string
+   */
+  function slugify(string) {
+    var a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;'
+    var b = 'aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrsssssttuuuuuuuuuwxyyzzz------'
+    var p = new RegExp(a.split('').join('|'), 'g')
+
+    return string.toString().toLowerCase()
+      .replace(/\s+/g, '-') // Replace spaces with -
+      .replace(p, function (c) { return b.charAt(a.indexOf(c)) }) // Replace special characters
+      .replace(/&/g, '-and-') // Replace & with 'and'
+      .replace(/[^\w\-]+/g, '') // Remove all non-word characters
+      .replace(/\-\-+/g, '-') // Replace multiple - with single -
+      .replace(/^-+/, '') // Trim - from start of text
+      .replace(/-+$/, '') // Trim - from end of text
+  }
+
+  /**
+   * Get the URL to the current page
+   */
+  function getCurrentURL() {
+    return window.location.protocol + '//' + window.location.host + window.location.pathname
+  }
+
+  function getCssVar(varName) {
+    return getComputedStyle(document.body).getPropertyValue(varName);
+  }
+
+  function createTwitterLink(el, text, via) {
+    var url = Elab.Utils.getCurrentURL()
+    var params = []
+    if (text)
+      params.push('text='+ encodeURIComponent(text))
+    if (via)
+      params.push('via='+ encodeURIComponent(via))
+    params.push('url=' + encodeURIComponent(url))
+    $(el).attr('href', 'https://twitter.com/intent/tweet?' + params.join('&'))
+    $(el).attr('target', '_blank')
+  }
+
+  function createFacebookLink(el) {
+    var url = Elab.Utils.getCurrentURL()
+    $(el).attr('href', 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url))
+    $(el).attr('target', '_blank')
+  }
+
+  return {
+    getCssVar: getCssVar,
+    getCurrentURL: getCurrentURL,
+    slugify: slugify,
+    createTwitterLink: createTwitterLink,
+    createFacebookLink: createFacebookLink
+  }
+
+})(Elab)
+
 /**
  * CONFIG MODULE
  * ---
@@ -106,14 +165,6 @@ Elab.Config = (function(Elab) {
       {
         selector: '.visual__toggle',
         text: 'Show relative to average'
-      },
-      {
-        selector: '.footnote',
-        text: [
-          'Average filings taken from 2012 - 2016',
-          'Filings for this year provided by January Advisors',
-          'Partial filings for April, as of April 18'
-        ].map((l,i) => `<span><sup>${i+1}</sup> ${l}</span>`).join('')
       }
     ],
     markLines: [],
@@ -140,14 +191,6 @@ Elab.Config = (function(Elab) {
       {
         selector: '.visual__toggle',
         text: 'Show filing count'
-      },
-      {
-        selector: '.footnote',
-        text: [
-          'Average filings taken from 2012 - 2016',
-          'Filings for this year provided by January Advisors',
-          'Partial filings for April, as of April 18'
-        ].map((l,i) => `<span><sup>${i+1}</sup> ${l}</span>`).join('')
       }
     ],
     markLines: [
@@ -185,18 +228,11 @@ Elab.Config = (function(Elab) {
     content: [
       {
         selector: '.visual__title',
-        text: 'Filings relative to average, by tract racial majority'
+        text: 'Filings Relative to Average, by Neighborhood Racial/Ethnic Majority'
       },
       {
         selector: '.visual__toggle',
         text: 'Show filing count'
-      },
-      {
-        selector: '.footnote',
-        text: [
-          'Average filings taken from 2012 - 2016',
-          'Partial filings shown for April, as of April 18'
-        ].map((l,i) => `<span><sup>${i+1}</sup> ${l}</span>`).join('')
       }
     ],
     markLines: [
@@ -215,7 +251,7 @@ Elab.Config = (function(Elab) {
       xTooltip: d3.timeFormat("%B %Y"),
       yTooltip: d3.format(",.0%"),
       tooltip: function (d) {
-        var distance = 1-d._raw.y
+        var distance = d._raw.y - 1
         var value = Math.abs(distance)
         var dir = distance === 0 ? 'mid' : (distance > 0 ? 'up' : 'down')
         var str = (dir === 'mid')
@@ -237,19 +273,12 @@ Elab.Config = (function(Elab) {
     content: [
       {
         selector: '.visual__title',
-        text: 'Eviction filings by demographic'
+        text: 'Filings by Neighborhood Racial/Ethnic Majority'
+        
       },
       {
         selector: '.visual__toggle',
         text: 'Show relative to average'
-      },
-      {
-        selector: '.footnote',
-        text: [
-          'Dots represent the average filings for each demographic.',
-          'Average filings taken from 2012 - 2016',
-          'Partial filings shown for April, as of April 18'
-        ].map((l,i) => `<span><sup>${i+1}</sup> ${l}</span>`).join('')
       }
     ],
     markLines: [],
@@ -263,7 +292,7 @@ Elab.Config = (function(Elab) {
     },
     format: {
       tooltip: function (d) {
-        var distance = d._raw.extras['avg_filings'] - d._raw.y
+        var distance = d._raw.y - d._raw.extras['avg_filings']
         var value = Math.abs(distance)
         var dir = distance === 0 ? 'mid' : (distance > 0 ? 'up' : 'down')
         var str = (dir === 'mid')
@@ -304,6 +333,7 @@ Elab.Config = (function(Elab) {
   }
 
 })(Elab);
+
 
 
 /**
@@ -1036,11 +1066,10 @@ Elab.Chart = (function(Elab) {
 
   /**
    * 
-   * @param {*} elementId id of the svg element (must be svg)
+   * @param {*} elementId id of the section root
    * @param {*} config the chart config
    */
   function createChart(elementId, config, callback) {
-
     // Load the data and draw a chart
     d3.csv(config.url, function (data) {
       if (data) {
@@ -1063,7 +1092,30 @@ Elab.Chart = (function(Elab) {
     })
   }
 
+  function init(rootEl, config) {
+
+    var rootEl = $(rootEl)
+    var chartEl = rootEl.find('.chart')[0]
+    var toggleEl = rootEl.find('.visual__toggle')
+    var contentEl = rootEl.find(".details")
+    var footnoteEl = rootEl.find(".footnote")
+    footnoteEl.append(contentEl.find("ol"))
+    var configs = Elab.Config.getConfig(config.id, config.csv)
+    var currentConfig = configs[0]
+    createChart(chartEl, currentConfig, function(chart) {
+      toggleEl.on('click', function() {
+        if (currentConfig.id === configs[0].id) {
+          currentConfig = configs[1]
+        } else {
+          currentConfig = configs[0]
+        }
+        chart.update(currentConfig)
+      })
+    })
+  }
+
   return {
+    init: init,
     createChart: createChart
   }
 
@@ -1092,7 +1144,7 @@ Elab.Map = (function(Elab) {
     const dataDict = data.reduce(function (dict, item) {
       dict[item.id] = {
         "diff": parseFloat(item["month_diff"]),
-        "majority": item["tract_racial_majority"]
+        "majority": item["racial_majority"]
       }
       return dict;
     }, {})
@@ -1113,6 +1165,22 @@ Elab.Map = (function(Elab) {
    * @param {*} range 
    */
   function addChoroplethLayer(map, data, prop, range) {
+    var mid = (range[1] - range[0]) / 2
+    var fillColor = [
+      'interpolate',
+      ['linear'],
+      ['get', prop],
+      range[0],
+      Elab.Utils.getCssVar('--choro1'),
+      (mid - range[0]) / 2,
+      Elab.Utils.getCssVar('--choro2'),
+      mid,
+      Elab.Utils.getCssVar('--choro3'),
+      mid + ((range[1] - mid) / 2),
+      Elab.Utils.getCssVar('--choro4'),
+      range[1],
+      Elab.Utils.getCssVar('--choro5')
+    ]
     map.addSource('choropleth', {
       'type': 'geojson',
       'data': data
@@ -1123,22 +1191,12 @@ Elab.Map = (function(Elab) {
       'source': 'choropleth',
       'layout': {},
       'paint': {
-        'fill-color': [
-          'interpolate',
-          ['linear'],
-          ['get', prop],
-          range[0],
-          '#2C897F',
-          (range[1] - range[0]) / 2,
-          'rgba(215, 227, 244, 0.7)',
-          range[1],
-          '#e24000'
-        ],
+        'fill-color': fillColor,
         'fill-opacity':[
           'case',
           ['boolean', ['feature-state', 'hover'], false],
           1,
-          0.7
+          0.8
         ]
       }
     }, "building");
@@ -1172,7 +1230,7 @@ Elab.Map = (function(Elab) {
     }, "building");
   }
 
-  function createMap(id, geojsonUrl, dataUrl) {
+  function createMap(el, geojsonUrl, dataUrl) {
 
     var hoveredStateId = null;
     var usBounds = [
@@ -1181,7 +1239,7 @@ Elab.Map = (function(Elab) {
     ]
     mapboxgl.accessToken = accessToken;
     var map = new mapboxgl.Map({
-      container: id,
+      container: el,
       style: 'mapbox://styles/eviction-lab/ck8za8qns07451jpm48xn6tq2',
       bounds: usBounds,
       maxBounds: usBounds
@@ -1311,7 +1369,17 @@ Elab.Map = (function(Elab) {
     return map
   }
 
+  function init(el, config) {
+    if (el && config.geojson && config.csv) {
+      var rootEl = $(el)
+      var mapEl = rootEl.find('.map')[0]
+      return createMap(mapEl, config.geojson, config.csv)
+    }
+    throw new Error("could not initialize map section")
+  }
+
   return {
+    init: init,
     createMap: createMap
   }
 
@@ -1341,7 +1409,7 @@ Elab.Table = (function(Elab) {
   }
 
   function loadTableData(dataUrl, callback) {
-    d3.csv(tableUrl, function(data) {
+    d3.csv(dataUrl, function(data) {
       var parseDate = d3.timeParse("%m/%d/%Y")
       var parsedData = data.map(function(d) {
         var stats = ['week', 'month', 'cumulative'].reduce(
@@ -1359,7 +1427,6 @@ Elab.Table = (function(Elab) {
           name: d.name,
         }, stats)
       })
-      console.log('parsed', parsedData)
       callback && callback(parsedData)
     })
   }
@@ -1375,11 +1442,41 @@ Elab.Table = (function(Elab) {
     diffEl.className = diffEl.className + ' arrow ' + change.direction
   }
 
+  function getRowHtml(data) {
+    var weekChange = getPercentChange(data.week.diff)
+    var monthChange = getPercentChange(data.month.diff)
+    var slug = Elab.Utils.slugify(data.name)
+    var url = Elab.Utils.getCurrentURL() + slug
+    var html = '';
+    html += '<tr class="table__row" data-name="' + data.name + '" data-href="' + url + '">'
+    html += '<td class="table__cell table__cell--name">' + data.name + '</td>'
+    html += '<td class="table__cell table__cell--number">' + 
+              data.week.filings + 
+              ' (<span class="arrow ' + weekChange.direction + '">' + weekChange.value + '</span>)' +
+            '</td>'
+    html += '<td class="table__cell table__cell--number">' + 
+              data.month.filings + 
+              ' (<span class="arrow ' + monthChange.direction + '">' + monthChange.value + '</span>)' +
+            '</td>'
+    html += '<td class="table__cell table__cell--button">' +
+              '<a href="' + url + '" class="btn btn-default">View Full Report <i class="fa fa-chevron-right"></i></a>' +
+            '</td>'
+    html += '</tr>'
+    return html
+  }
+
+  function getFootnoteHtml(data) {
+    var dateFormat = d3.timeFormat("%B %d, %Y")
+    var html = [];
+    html.push('<sup>1</sup> filings for the week of ' + dateFormat(data.week.date) + '.' )
+    html.push('<sup>2</sup> filings for the 4 week period starting on ' + dateFormat(data.month.date) + '.' )
+    html.push('percent difference relative to average filings from 2012 - 2016 for the same time period.')
+    return html.join('<br />')
+  }
+
   function createIntroTable(fips, dataUrl) {
     loadTableData(dataUrl, function(data) {
-      console.log(data, fips)
       var locationData = data.find(function (d) { return d.id === fips })
-      console.log(data, locationData)
       if (locationData) {
         renderStatRow(locationData, 'week')
         renderStatRow(locationData, 'month')
@@ -1388,7 +1485,24 @@ Elab.Table = (function(Elab) {
   }
 
   function createIndexTable(el, dataUrl) {
-  
+    var bodyEl = $(el).find('.table__body')
+    loadTableData(dataUrl, function(data) {
+      console.log(data)
+      bodyEl.html('') // clear loading
+      var locations = data
+      locations.forEach(function(city) {
+        var html = getRowHtml(city)
+        bodyEl.append(html)
+      })
+      $(el).next().html(getFootnoteHtml(data[0]))
+      $(el).tablesorter()
+      $(el).find('.table__row').click(function () {
+        var url = $(this).data("href")
+        if (url) {
+          window.location.href = url
+        }
+      })
+    })
   }
 
   return {
@@ -1397,4 +1511,35 @@ Elab.Table = (function(Elab) {
   }
 })(Elab)
 
-console.log(Elab)
+
+/**
+ * SECTION MODULE
+ * ---
+ * Public
+ *  - init()
+ */
+
+Elab.Section = (function(Elab) {
+
+  function init(type, el, config) {
+    var rootEl = $(el)
+
+    // move footnotes into proper space
+    var contentEl = rootEl.find(".details")
+    var footnoteEl = rootEl.find(".footnote")
+    footnoteEl.append(contentEl.find("ol"))
+
+    // initialize visual component
+    if (type === 'map') {
+      return Elab.Map.init(rootEl[0], config)
+    }
+    if (type === 'chart') {
+      return Elab.Chart.init(rootEl[0], config)
+    }
+  }
+
+  return {
+    init: init
+  }
+
+})(Elab)

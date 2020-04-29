@@ -1,7 +1,6 @@
 <div class="section section--map">
   <div class="section__content">
     <div class="details">
-      <h2 class="title">{{ .Get "title" }}</h2>
       <p class="description">{{ .Inner }}</p>
     </div>
     <div class="visual">
@@ -9,7 +8,9 @@
     </div> 
     <div class="legend">
       <div class="legend-choropleth">
-        <span class="legend-choropleth__title">Eviction Filings <span>last 30 days</span></span>
+        <span class="legend-choropleth__title">
+          Eviction Filings <span>last 30 days</span>
+        </span>
         <div class="legend-choropleth__gradient"></div>
         <div class="legend-choropleth__labels">
           <span class="legend-choropleth__min">-100%</span>
@@ -18,15 +19,14 @@
         </div>
       </div>
     </div>
-    <p class="footnote">
-      <sup>1</sup> eviction filings relative to average between 2012 - 2016.
-    </p>
+    <p class="footnote"></p>
   </div>
   <script>
     window.addEventListener("load", function () {
-      var geojsonUrl = {{ .Page.Params.geojson }};
-      var csvUrl = {{ .Page.Params.mapdata }};
-      Elab.Map.createMap('map', geojsonUrl, csvUrl)
+      var geojson = {{ .Get "shapes" }};
+      var csv = {{ .Get "data" }};
+      var rootEl = '.section--map'
+      Elab.Section.init('map', rootEl, { geojson: geojson, csv: csv })
     })
   </script>
 </div>

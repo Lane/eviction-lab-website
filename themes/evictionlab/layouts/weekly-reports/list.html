@@ -10,46 +10,15 @@
 
 <div class="layout layout--full">
   <article class="column column--content">
-    {{ .Content }}
-    <table class="table">
-      <thead class="table__head">
-        <tr class="table__row">
-          <th class="table__cell table__cell--number">City</th>
-          <th class="table__cell table__cell--number">Evictions <br />Last Week<sup>1</sup></th>
-          <th class="table__cell table__cell--number">Compared <br />to Average<sup>2</sup></th>
-          <th class="table__cell table__cell--button" data-sorter="false"></th>
-        </tr>
-      </thead>
-      <tbody class="table__body">
-        {{ $url := "./static/csv/weekly_places.csv" }} {{ $sep := "," }} 
-        {{ range $i, $r := getCSV $sep $url }} 
-        {{ if ge $i 1 }}
-        <tr class="table__row" data-name="{{ index $r 0 }}">
-          <td class="table__cell table__cell--name">{{ index $r 0 }}</td>
-          <td class="table__cell table__cell--number">{{ index $r 1 }}</td>
-          <td class="table__cell table__cell--number">{{ (index $r 2) | float | mul 100 | lang.NumFmt 0 }}%</td>
-          <td class="table__cell table__cell--button"><a href="#" class="btn btn-default">View Full Report <i class="fa fa-chevron-right"></i></a></td>
-        </tr>
-        {{ end }} 
-        {{ end }}
-      </tbody>
-    </table>
-    <p class="caption">
-      <sup>1</sup> evictions for the week of April 6 - 13, 2020 <br/>
-      <sup>2</sup> average filings calculated using validated county data between 2012 and 2016
+    <h2 class="subhead bordered-header primary">
+      <a id="top">{{ .Params.h2 }}</a>
+      <span class="subhead-rt date">{{ .Date.Format "January 2, 2006" }}</span>
+    </h2>
 
-    </p>
+    {{ .Content }}
+
   </article>
-  <!-- <aside class="column column--sidebar">
-    <h2>Reports</h2>
-    <ul>
-      {{ range .Pages }}
-      <li>
-        <a href="{{.Permalink}}">{{.Title}}</a>
-      </li>
-      {{ end }}
-    </ul>
-  </aside> -->
+
 </div>
 
 

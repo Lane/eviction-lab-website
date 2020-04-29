@@ -1,5 +1,5 @@
 ---
-childof: eviction-watch
+childof: weekly-reports
 title: "Houston, Texas"
 h1: Houston, Texas
 scripts: weekly

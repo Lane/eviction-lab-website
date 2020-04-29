@@ -1383,6 +1383,26 @@
   </url>
   
   <url>
+    <loc>/weekly-reports/</loc>
+    <lastmod>2020-04-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/weekly-reports/houston-tx/</loc>
+    <lastmod>2020-04-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/weekly-reports/milwaukee-wi/</loc>
+    <lastmod>2020-04-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/weekly-reports/richmond-va/</loc>
+    <lastmod>2020-04-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/covid-eviction-policies/</loc>
     <lastmod>2020-03-19T16:46:40+00:00</lastmod>
   </url>
@@ -1574,11 +1594,6 @@
   
   <url>
     <loc>/updates/events/</loc>
-    <lastmod>2017-11-19T20:43:49-08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/eviction-watch/</loc>
     <lastmod>2017-11-19T20:43:49-08:00</lastmod>
   </url>
   
@@ -1828,50 +1843,6 @@
   
   <url>
     <loc>/covid-eviction-map/</loc>
-  </url>
-  
-  <url>
-    <loc>/eviction-watch/boston-ma/</loc>
-  </url>
-  
-  <url>
-    <loc>/eviction-watch/cincinnati-oh/</loc>
-  </url>
-  
-  <url>
-    <loc>/eviction-watch/cleveland-oh/</loc>
-  </url>
-  
-  <url>
-    <loc>/eviction-watch/columbia-sc/</loc>
-  </url>
-  
-  <url>
-    <loc>/eviction-watch/el-paso-tx/</loc>
-  </url>
-  
-  <url>
-    <loc>/eviction-watch/evansville-in/</loc>
-  </url>
-  
-  <url>
-    <loc>/eviction-watch/houston-tx/</loc>
-  </url>
-  
-  <url>
-    <loc>/eviction-watch/las-cruces-nm/</loc>
-  </url>
-  
-  <url>
-    <loc>/eviction-watch/milwaukee-wi/</loc>
-  </url>
-  
-  <url>
-    <loc>/eviction-watch/richmond-va/</loc>
-  </url>
-  
-  <url>
-    <loc>/eviction-watch/st-louis-mo/</loc>
   </url>
   
   <url>

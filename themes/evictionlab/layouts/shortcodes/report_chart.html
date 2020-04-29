@@ -1,10 +1,6 @@
-{{ $data := cond (eq (.Get "id") "avg") (.Page.Params.chart1data) (.Page.Params.chart2data) }}
-<div id="{{ .Get `id` }}" class="section section--chart section--avg">
+<section id="{{ .Get `id` }}" class="section section--chart section--avg">
   <div class="section__content">
-    <div class="details">
-      <h2 class="title">{{ .Get "title" }}</h2>
-      <p class="description">{{ .Inner }}</p>
-    </div>
+    <div class="details">{{ .Inner }}</div>
     <div class="visual">
       <div class="visual__header">
         <h3 class="visual__title"></h3>
@@ -16,24 +12,12 @@
     <p class="footnote"></p>
   </div>
   <script>
-    window.addEventListener("load", function() {
-      var rootEl = document.getElementById({{ .Get "id" }})
-      var toggleEl = rootEl.querySelector('.visual__toggle')
-      var chartEl = rootEl.querySelector('.chart')
-      var configs = Elab.Config.getConfig({{ .Get "id" }}, {{ $data }})
-      var currentConfig = configs[0]
-    
-      Elab.Chart.createChart(chartEl, currentConfig, function(chart) {
-        toggleEl.addEventListener("click", function() {
-          if (currentConfig.id === configs[0].id) {
-            currentConfig = configs[1]
-          } else {
-            currentConfig = configs[0]
-          }
-          chart.update(currentConfig)
-        })
-      })
+    window.addEventListener('load', function() {
+      var id = {{ .Get "id" }}
+      var csv = {{ .Get "data" }}
+      var rootEl = '#'+id
+      Elab.Section.init('chart', rootEl, { id: id, csv: csv })
     });
     </script>
-</div>
+</section>
 

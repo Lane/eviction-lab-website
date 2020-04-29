@@ -853,6 +853,33 @@ Within our data, case information is recorded as separate actions with dates of 
     </item>
     
     <item>
+      <title>Houson, Texas | Weekly Eviction Reports | Eviction Lab</title>
+      <link>/weekly-reports/houston-tx/</link>
+      <pubDate>Tue, 28 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/weekly-reports/houston-tx/</guid>
+      <description>Houston, Texas April 28, 2020  Eviction filings in the last week continue to be lower than the average from 2012 to 2016. An eviction moratorium is currently in place which has had a chilling effect on filings since it was invoked on March 19, 2020. Filings Last Week  ()   Filings Last 4 Weeks  ()   Eviction Moratorium March 19 - April 30, 2020     Share on Twitter  Share on Facebook   var tableUrl = &#34;</description>
+    </item>
+    
+    <item>
+      <title>Milwaukee, Wisconsin | Weekly Eviction Reports | Eviction Lab</title>
+      <link>/weekly-reports/milwaukee-wi/</link>
+      <pubDate>Tue, 28 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/weekly-reports/milwaukee-wi/</guid>
+      <description>Milwaukee, Wisconsin April 28, 2020  milwaukee intro Filings Last Week  ()   Filings Last 4 Weeks  ()   Eviction Moratorium March 19 - April 30, 2020     Share on Twitter  Share on Facebook   var tableUrl = &#34;/data/table.csv&#34; var fips = &#34;</description>
+    </item>
+    
+    <item>
+      <title>Richmond, Virginia | Weekly Eviction Reports | Eviction Lab</title>
+      <link>/weekly-reports/richmond-va/</link>
+      <pubDate>Tue, 28 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/weekly-reports/richmond-va/</guid>
+      <description>Richmond, Virginia April 28, 2020  Richmond intro Filings Last Week  ()   Filings Last 4 Weeks  ()   Eviction Moratorium March 19 - April 30, 2020     Share on Twitter  Share on Facebook   var tableUrl = &#34;/data/table.csv&#34; var fips = &#34;</description>
+    </item>
+    
+    <item>
       <title>COVID-19 and Changing Eviction Policies Around the Nation</title>
       <link>/covid-eviction-policies/</link>
       <pubDate>Thu, 19 Mar 2020 16:46:40 +0000</pubDate>
@@ -1130,105 +1157,6 @@ If you use Eviction Lab data, please let us know! Share your findings with us by
       <pubDate>Wed, 31 Dec 1969 17:33:38 -0700</pubDate>
       
       <guid>/updates/events/2018-10-10-neighbor-to-neighbor/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Houson, Texas | Weekly Eviction Reports | Eviction Lab</title>
-      <link>/eviction-watch/boston-ma/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/eviction-watch/boston-ma/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Houson, Texas | Weekly Eviction Reports | Eviction Lab</title>
-      <link>/eviction-watch/cincinnati-oh/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/eviction-watch/cincinnati-oh/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Houson, Texas | Weekly Eviction Reports | Eviction Lab</title>
-      <link>/eviction-watch/cleveland-oh/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/eviction-watch/cleveland-oh/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Houson, Texas | Weekly Eviction Reports | Eviction Lab</title>
-      <link>/eviction-watch/columbia-sc/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/eviction-watch/columbia-sc/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Houson, Texas | Weekly Eviction Reports | Eviction Lab</title>
-      <link>/eviction-watch/el-paso-tx/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/eviction-watch/el-paso-tx/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Houson, Texas | Weekly Eviction Reports | Eviction Lab</title>
-      <link>/eviction-watch/evansville-in/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/eviction-watch/evansville-in/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Houson, Texas | Weekly Eviction Reports | Eviction Lab</title>
-      <link>/eviction-watch/houston-tx/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/eviction-watch/houston-tx/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Houson, Texas | Weekly Eviction Reports | Eviction Lab</title>
-      <link>/eviction-watch/las-cruces-nm/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/eviction-watch/las-cruces-nm/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Houson, Texas | Weekly Eviction Reports | Eviction Lab</title>
-      <link>/eviction-watch/milwaukee-wi/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/eviction-watch/milwaukee-wi/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Houson, Texas | Weekly Eviction Reports | Eviction Lab</title>
-      <link>/eviction-watch/richmond-va/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/eviction-watch/richmond-va/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Houson, Texas | Weekly Eviction Reports | Eviction Lab</title>
-      <link>/eviction-watch/st-louis-mo/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/eviction-watch/st-louis-mo/</guid>
       <description></description>
     </item>
     
